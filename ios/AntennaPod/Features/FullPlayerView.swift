@@ -30,6 +30,7 @@ struct FullPlayerView: View {
     @State private var showDescription = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
+    @State private var showSleepTimerSheet = false
     @State private var showCustomPlaybackSpeed = false
     @State private var showJumpToPosition = false
     @State private var showBookmarks = false
@@ -320,6 +321,20 @@ struct FullPlayerView: View {
             _ = playback.pictureInPicture.isActive
         }
         #if DEBUG
+        // Screenshots: `-APDebugSleepTimerSheet` opens the Sleep timer sheet; with
+        // `-APDebugSleepTimerMinutes <n>` a clock timer is started first (active state).
+        .task {
+            let args = ProcessInfo.processInfo.arguments
+            guard args.contains("-APDebugSleepTimerSheet") else { return }
+            // Wait until the player cover has finished presenting, or the sheet is dropped.
+            try? await Task.sleep(nanoseconds: 4_000_000_000)
+            if let i = args.firstIndex(of: "-APDebugSleepTimerMinutes"), i + 1 < args.count, let m = Int(args[i + 1]) {
+                playback.setSleepTimer(minutes: m, remember: false)
+            }
+            showSleepTimerSheet = true
+        }
+        #endif
+        #if DEBUG
         // Screenshots: `-APDebugPodcastSettings` opens Podcast settings once the player is up.
         .task {
             guard ProcessInfo.processInfo.arguments.contains("-APDebugPodcastSettings") else { return }
@@ -411,6 +426,12 @@ struct FullPlayerView: View {
             )
         }
         .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
+        .sheet(isPresented: $showSleepTimerSheet) {
+            SleepTimerSheet()
+                .environmentObject(playback)
+                .environmentObject(settings)
+                .environmentObject(store)
+        }
         .sheet(isPresented: $showCustomSleepTimer) {
             CustomSleepTimerSheet(initialMinutes: settings.lastCustomSleepTimerMinutes)
                 .environmentObject(playback)
@@ -1676,60 +1697,10 @@ struct FullPlayerView: View {
         .accessibilityHint(String(localized: "Cycles the session playback speed through presets. Does not change Default speed or this podcast’s speed override. Long-press for the full list and Custom…. Not Volume boost or Preserve pitch."))
     }
 
+    /// Android player bar: the sleep icon opens the Sleep timer sheet (SleepTimerDialog).
     private var sleepTimerMenu: some View {
-        Menu {
-            if playback.isSleepTimerActive {
-                if let label = playback.sleepTimerStatusLabel {
-                    Text(String(format: String(localized: "Active · %@"), label))
-                }
-                Button(extendSleepTimerButtonTitle(minutes: 5)) {
-                    playback.extendSleepTimer(byMinutes: 5)
-                }
-                .accessibilityLabel(extendSleepTimerButtonTitle(minutes: 5))
-                .accessibilityHint(extendSleepTimerAccessibilityHint(minutes: 5))
-                Button(extendSleepTimerButtonTitle(minutes: 10)) {
-                    playback.extendSleepTimer(byMinutes: 10)
-                }
-                .accessibilityLabel(extendSleepTimerButtonTitle(minutes: 10))
-                .accessibilityHint(extendSleepTimerAccessibilityHint(minutes: 10))
-                Button("Turn off", role: .destructive) {
-                    playback.disableSleepTimer()
-                }
-                .accessibilityHint(String(localized: "Turns off the active sleep timer immediately, including clock, End of episode, End of chapter, and End of queue. Restores volume if a fade was in progress. No confirmation. Does not pause or stop playback now."))
-                Divider()
-            }
-            ForEach(PlaybackService.clockPresetsMinutes, id: \.self) { minutes in
-                Button("\(minutes) min") {
-                    playback.setSleepTimer(minutes: minutes)
-                }
-                .accessibilityHint(clockPresetSleepTimerAccessibilityHint(minutes: minutes))
-            }
-            Button("End of episode") {
-                playback.setSleepTimerEndOfEpisode()
-            }
-            .accessibilityHint(String(localized: "Pauses when the current episode ends. No confirmation. Replaces any active clock, End of chapter, or End of queue sleep timer. Does not pause playback now."))
-            Button(String(localized: "End of chapter")) {
-                playback.setSleepTimerEndOfChapter()
-            }
-            .disabled(!canSleepTimerEndOfChapter)
-            .accessibilityHint(
-                canSleepTimerEndOfChapter
-                    ? String(localized: "Pauses when the current chapter ends. No confirmation. Replaces any active clock, End of episode, or End of queue sleep timer. Does not pause playback now.")
-                    : String(localized: "No chapters available")
-            )
-            Button(String(localized: "End of queue")) {
-                playback.setSleepTimerEndOfQueue()
-            }
-            .disabled(!canSleepTimerEndOfQueue)
-            .accessibilityHint(
-                canSleepTimerEndOfQueue
-                    ? String(localized: "Stops after the last episode in the queue. No confirmation. Replaces any active clock, End of episode, or End of chapter sleep timer. Does not pause or stop playback now.")
-                    : sleepTimerEndOfQueueDisabledHint
-            )
-            Button(String(localized: "Custom…")) {
-                showCustomSleepTimer = true
-            }
-            .accessibilityHint(String(localized: "Opens a sheet to set a custom clock sleep timer between 1 and 180 minutes. The timer starts only after you tap Set. Remembers the last Custom value for next time. Does not pause playback now."))
+        Button {
+            showSleepTimerSheet = true
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "moon.zzz")

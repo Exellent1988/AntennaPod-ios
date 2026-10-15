@@ -1344,6 +1344,12 @@ final class AppSettings: ObservableObject {
         static let notifyOnSleepTimerEnd = "settings.notifyOnSleepTimerEnd"
         static let lastCustomSleepTimerMinutes = "settings.lastCustomSleepTimerMinutes"
         static let sleepTimerFadeEnabled = "settings.sleepTimerFadeEnabled"
+        static let sleepTimerVibrate = "settings.sleepTimerVibrate"
+        static let sleepTimerShakeToReset = "settings.sleepTimerShakeToReset"
+        static let sleepTimerAutoEnable = "settings.sleepTimerAutoEnable"
+        static let sleepTimerAutoEnableFromHour = "settings.sleepTimerAutoEnableFromHour"
+        static let sleepTimerAutoEnableToHour = "settings.sleepTimerAutoEnableToHour"
+        static let lastSleepTimerMinutes = "settings.lastSleepTimerMinutes"
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let discoverChartsLimit = "settings.discovery.chartsLimit"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
@@ -1621,6 +1627,54 @@ final class AppSettings: ObservableObject {
         didSet {
             UserDefaults.standard.set(sleepTimerFadeEnabled, forKey: Keys.sleepTimerFadeEnabled)
         }
+    }
+
+    /// Android `SleepTimerPreferences.vibrate` (default off): vibrate once ~10 s before the clock timer ends.
+    @Published var sleepTimerVibrate: Bool {
+        didSet {
+            UserDefaults.standard.set(sleepTimerVibrate, forKey: Keys.sleepTimerVibrate)
+        }
+    }
+
+    /// Android `shakeToReset` (default on): shaking during the last ~10 s restarts the clock timer.
+    @Published var sleepTimerShakeToReset: Bool {
+        didSet {
+            UserDefaults.standard.set(sleepTimerShakeToReset, forKey: Keys.sleepTimerShakeToReset)
+        }
+    }
+
+    /// Android `autoEnable` (default off): start the last-used timer on playback start inside the hour window.
+    @Published var sleepTimerAutoEnable: Bool {
+        didSet {
+            UserDefaults.standard.set(sleepTimerAutoEnable, forKey: Keys.sleepTimerAutoEnable)
+        }
+    }
+
+    /// Android `autoEnableFrom` hour (0–23, default 22).
+    @Published var sleepTimerAutoEnableFromHour: Int {
+        didSet {
+            UserDefaults.standard.set(sleepTimerAutoEnableFromHour, forKey: Keys.sleepTimerAutoEnableFromHour)
+        }
+    }
+
+    /// Android `autoEnableTo` hour (0–23, default 6). Equal from/to = whole day.
+    @Published var sleepTimerAutoEnableToHour: Int {
+        didSet {
+            UserDefaults.standard.set(sleepTimerAutoEnableToHour, forKey: Keys.sleepTimerAutoEnableToHour)
+        }
+    }
+
+    /// Android `LastValue`: minutes of the last clock timer the user started (used by auto-enable).
+    @Published var lastSleepTimerMinutes: Int {
+        didSet {
+            UserDefaults.standard.set(lastSleepTimerMinutes, forKey: Keys.lastSleepTimerMinutes)
+        }
+    }
+
+    nonisolated static func clampHour(_ hour: Int) -> Int { min(max(hour, 0), 23) }
+    static func clampSleepMinutes(_ minutes: Int) -> Int {
+        min(max(minutes, PlaybackService.customSleepTimerMinutesRange.lowerBound),
+            PlaybackService.customSleepTimerMinutesRange.upperBound)
     }
 
     /// iTunes top-lists country: `"auto"` (device locale → else `de`) or ISO alpha-2 (`de`, `us`, …).
@@ -2464,6 +2518,12 @@ final class AppSettings: ObservableObject {
             // Default on — Android always fades in the last NOTIFICATION_THRESHOLD (10s).
             sleepTimerFadeEnabled = true
         }
+        sleepTimerVibrate = UserDefaults.standard.object(forKey: Keys.sleepTimerVibrate) as? Bool ?? false
+        sleepTimerShakeToReset = UserDefaults.standard.object(forKey: Keys.sleepTimerShakeToReset) as? Bool ?? true
+        sleepTimerAutoEnable = UserDefaults.standard.object(forKey: Keys.sleepTimerAutoEnable) as? Bool ?? false
+        sleepTimerAutoEnableFromHour = Self.clampHour(UserDefaults.standard.object(forKey: Keys.sleepTimerAutoEnableFromHour) as? Int ?? SleepTimerLogic.defaultAutoEnableFromHour)
+        sleepTimerAutoEnableToHour = Self.clampHour(UserDefaults.standard.object(forKey: Keys.sleepTimerAutoEnableToHour) as? Int ?? SleepTimerLogic.defaultAutoEnableToHour)
+        lastSleepTimerMinutes = Self.clampSleepMinutes(UserDefaults.standard.object(forKey: Keys.lastSleepTimerMinutes) as? Int ?? 15)
         if UserDefaults.standard.object(forKey: Keys.askForAppStoreRating) != nil {
             askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
         } else {
@@ -2980,6 +3040,12 @@ final class AppSettings: ObservableObject {
             notifyOnSleepTimerEnd: notifyOnSleepTimerEnd,
             lastCustomSleepTimerMinutes: lastCustomSleepTimerMinutes,
             sleepTimerFadeEnabled: sleepTimerFadeEnabled,
+            sleepTimerVibrate: sleepTimerVibrate,
+            sleepTimerShakeToReset: sleepTimerShakeToReset,
+            sleepTimerAutoEnable: sleepTimerAutoEnable,
+            sleepTimerAutoEnableFromHour: sleepTimerAutoEnableFromHour,
+            sleepTimerAutoEnableToHour: sleepTimerAutoEnableToHour,
+            lastSleepTimerMinutes: lastSleepTimerMinutes,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeBoostPercent: volumeBoostPercent,
@@ -3108,6 +3174,12 @@ final class AppSettings: ObservableObject {
         let sleepRange = PlaybackService.customSleepTimerMinutesRange
         lastCustomSleepTimerMinutes = min(max(customSleep, sleepRange.lowerBound), sleepRange.upperBound)
         sleepTimerFadeEnabled = snap.sleepTimerFadeEnabled ?? true
+        sleepTimerVibrate = snap.sleepTimerVibrate ?? false
+        sleepTimerShakeToReset = snap.sleepTimerShakeToReset ?? true
+        sleepTimerAutoEnable = snap.sleepTimerAutoEnable ?? false
+        sleepTimerAutoEnableFromHour = Self.clampHour(snap.sleepTimerAutoEnableFromHour ?? SleepTimerLogic.defaultAutoEnableFromHour)
+        sleepTimerAutoEnableToHour = Self.clampHour(snap.sleepTimerAutoEnableToHour ?? SleepTimerLogic.defaultAutoEnableToHour)
+        lastSleepTimerMinutes = Self.clampSleepMinutes(snap.lastSleepTimerMinutes ?? 15)
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeBoostPercent = Self.clampVolumeBoostPercent(
@@ -3323,6 +3395,18 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var lastCustomSleepTimerMinutes: Int? = 15
     /// Absent in older backups → treated as on (Android always fades).
     var sleepTimerFadeEnabled: Bool? = true
+    /// Absent in older backups → Android default.
+    var sleepTimerVibrate: Bool? = nil
+    /// Absent in older backups → Android default.
+    var sleepTimerShakeToReset: Bool? = nil
+    /// Absent in older backups → Android default.
+    var sleepTimerAutoEnable: Bool? = nil
+    /// Absent in older backups → Android default.
+    var sleepTimerAutoEnableFromHour: Int? = nil
+    /// Absent in older backups → Android default.
+    var sleepTimerAutoEnableToHour: Int? = nil
+    /// Absent in older backups → Android default.
+    var lastSleepTimerMinutes: Int? = nil
     /// Absent in older backups → treated as on (default).
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).

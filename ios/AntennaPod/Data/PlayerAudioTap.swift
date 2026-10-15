@@ -17,11 +17,18 @@ final class PlayerAudioPipeline {
     let silence = SilenceAnalysisStage()
     /// Adaptive makeup gain for Volume adaptation boost modes (LoudnessEnhancer-like).
     let loudness = LoudnessEnhancerStage()
+    /// Sleep-timer fade (last ~10 s of a clock timer); separate from `gain` so it never touches
+    /// Volume boost / adaptation. Ramped per block, so the fade has no zipper steps.
+    let fade = GainStage()
+    /// Tells `PlaybackService` whether the tap really runs for this item (not for HLS / protected).
+    let activity = AudioActivityProbe()
 
     init() {
         chain.append(silence)
         chain.append(loudness)
         chain.append(gain)
+        chain.append(fade)
+        chain.append(activity)
     }
 
     /// Builds an `AVAudioMix` whose input parameters carry a tap feeding `chain`.
