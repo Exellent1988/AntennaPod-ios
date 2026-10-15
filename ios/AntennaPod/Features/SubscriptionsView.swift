@@ -524,31 +524,26 @@ struct SubscriptionsView: View {
                 } label: {
                     Text("Sort")
                 }
-                // Android subscriptions.xml: display list/grid, number of columns, counter.
-                Picker(selection: $settings.subscriptionsDisplayMode) {
-                    ForEach(SubscriptionsDisplayMode.allCases) { mode in
-                        Text(mode.label).tag(mode)
-                    }
-                } label: {
-                    Text("Display")
-                }
-                if effectiveDisplayMode == .grid {
-                    Picker(selection: $settings.subscriptionsGridColumns) {
-                        ForEach(2...5, id: \.self) { n in
-                            Text("\(n) columns").tag(n)
-                        }
-                    } label: {
-                        Text("Number of columns")
-                    }
-                    // Android subscriptions.xml pref_show_subscription_title.
-                    Toggle("Show podcast titles", isOn: $settings.subscriptionsGridShowTitles)
-                }
+                // Android subscriptions.xml order: sort, counter, number of columns (List, 2–5), show titles.
                 Picker(selection: $settings.subscriptionsCounterMode) {
                     ForEach(SubscriptionsCounterMode.allCases) { mode in
                         Text(mode.label).tag(mode)
                     }
                 } label: {
                     Text("Counter")
+                }
+                // Android subscription_num_columns submenu: subscription_display_list, 2, 3, 4, 5 (one choice).
+                Picker(selection: numberOfColumnsBinding) {
+                    ForEach(SubscriptionsDisplayMode.columnChoices, id: \.self) { n in
+                        Text(SubscriptionsDisplayMode.columnChoiceLabel(n)).tag(n)
+                    }
+                } label: {
+                    Text("Number of columns")
+                }
+                .pickerStyle(.menu)
+                // Android refreshToolbarState: pref_show_subscription_title only visible when columns > 1.
+                if effectiveDisplayMode == .grid {
+                    Toggle("Show podcast titles", isOn: $settings.subscriptionsGridShowTitles)
                 }
             } label: {
                 Label("Sort", systemImage: "arrow.up.arrow.down")
@@ -637,6 +632,18 @@ struct SubscriptionsView: View {
     #else
     static let debugHideLibrary = false
     #endif
+
+    /// Android SubscriptionFragment.setColumnNumber: 1 = list, 2–5 = grid with that many columns.
+    private var numberOfColumnsBinding: Binding<Int> {
+        Binding(
+            get: { SubscriptionsDisplayMode.columnChoice(mode: effectiveDisplayMode, gridColumns: settings.subscriptionsGridColumns) },
+            set: { n in
+                let (mode, cols) = SubscriptionsDisplayMode.apply(columnChoice: n, gridColumns: settings.subscriptionsGridColumns)
+                settings.subscriptionsGridColumns = cols
+                settings.subscriptionsDisplayMode = mode
+            }
+        )
+    }
 
     /// Saved mode, or grid for a `-APDebugSubscriptionsGrid` launch (never written back).
     private var effectiveDisplayMode: SubscriptionsDisplayMode {

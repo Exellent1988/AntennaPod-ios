@@ -11,4 +11,20 @@ final class SubscriptionsGridParityTests: XCTestCase {
         XCTAssertEqual(SubscriptionGridCell.titleFontSize(columns: 5), 14)
         XCTAssertGreaterThan(SubscriptionGridCell.titlePadding(columns: 3), SubscriptionGridCell.titlePadding(columns: 4))
     }
+
+    func testNumberOfColumnsMenuMapsListAndGrid() {
+        XCTAssertEqual(SubscriptionsDisplayMode.columnChoices, [1, 2, 3, 4, 5])
+        XCTAssertEqual(SubscriptionsDisplayMode.columnChoice(mode: .list, gridColumns: 4), 1)
+        XCTAssertEqual(SubscriptionsDisplayMode.columnChoice(mode: .grid, gridColumns: 4), 4)
+        XCTAssertTrue(SubscriptionsDisplayMode.apply(columnChoice: 1, gridColumns: 4) == (.list, 4), "List keeps the grid count")
+        XCTAssertTrue(SubscriptionsDisplayMode.apply(columnChoice: 5, gridColumns: 3) == (.grid, 5))
+        XCTAssertEqual(SubscriptionsDisplayMode.columnChoiceLabel(3), "3")
+    }
+
+    func testNewInstallsStartInTheGridLikeAndroid() {
+        XCTAssertEqual(SubscriptionsDisplayMode.initial(stored: nil, isFreshInstall: true), .grid)
+        XCTAssertEqual(SubscriptionsDisplayMode.initial(stored: nil, isFreshInstall: false), .list, "existing users keep the list")
+        XCTAssertEqual(SubscriptionsDisplayMode.initial(stored: "list", isFreshInstall: true), .list, "saved choice wins")
+        XCTAssertEqual(SubscriptionsDisplayMode.initial(stored: "grid", isFreshInstall: false), .grid)
+    }
 }
