@@ -54288,6 +54288,23 @@
           }
         }
       }
+    },
+    "Select country": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select country"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Land auswählen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

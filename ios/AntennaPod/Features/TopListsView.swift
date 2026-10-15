@@ -141,6 +141,25 @@ struct TopListsView: View {
         .refreshable {
             await loadCharts()
         }
+        // Android DiscoveryFragment countries_menu.xml (select_country): country picker in the toolbar.
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Picker("Select country", selection: Binding(
+                        get: { settings.chartsCountryCode },
+                        set: { settings.chartsCountryCode = $0 }
+                    )) {
+                        Text("Automatic").tag("auto")
+                        ForEach(ChartsCountryPreference.pickerCodes, id: \.self) { code in
+                            Text(Locale.current.localizedString(forRegionCode: code.uppercased()) ?? code.uppercased()).tag(code)
+                        }
+                    }
+                } label: {
+                    Label("Select country", systemImage: "globe")
+                }
+                .accessibilityIdentifier("discover.selectCountry")
+            }
+        }
         .task {
             if !didLoad {
                 await loadCharts()
