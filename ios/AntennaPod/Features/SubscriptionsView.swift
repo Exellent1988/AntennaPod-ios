@@ -480,6 +480,10 @@ struct SubscriptionsView: View {
                                 // One List row holding the whole grid: never a List selection row (no
                                 // edit-mode circle / indent); cells toggle via feedGridSelectable.
                                 .selectionDisabled()
+                                // Android fragment_subscriptions.xml: the grid sits directly on the screen
+                                // background (no inset card around the covers).
+                                .listRowBackground(Color.clear)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                         } else {
                             ForEach(section.feeds) { feed in
                                 feedRow(feed, summary: remainingByFeedId[feed.id])
