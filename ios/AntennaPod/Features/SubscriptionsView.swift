@@ -488,8 +488,8 @@ struct SubscriptionsView: View {
             }
         }
         .tabRootList(.subscriptions)
-        // Android FeedMultiSelectActionHandler: Select + Actions menu (grid mode has no selection).
-        .feedMultiSelect(selection: $feedSelection, feeds: effectiveDisplayMode == .grid ? [] : tagFilteredFeeds)
+        // Android FeedMultiSelectActionHandler: Select + Actions menu, in list and grid mode.
+        .feedMultiSelect(selection: $feedSelection, feeds: tagFilteredFeeds)
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
@@ -1026,6 +1026,8 @@ struct SubscriptionsView: View {
                     NavigationLink(value: feed) { Color.clear }
                         .opacity(0)
                 }
+                // Android SubscriptionsRecyclerAdapter action mode: tap toggles while Select is on.
+                .feedGridSelectable(selection: $feedSelection, feedId: feed.id)
                 .contextMenu {
                     Button {
                         feedForSettings = feed

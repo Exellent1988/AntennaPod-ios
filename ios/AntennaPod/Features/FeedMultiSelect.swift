@@ -163,3 +163,46 @@ extension View {
         modifier(FeedMultiSelectModifier(selection: selection, feeds: feeds))
     }
 }
+
+/// Grid-mode selection (Android SubscriptionsRecyclerAdapter in action mode: tap toggles, select icon on the
+/// cover, SelectableAdapter). The grid is one List row, so `List(selection:)` can't select single cells;
+/// while Select is on (editMode from FeedMultiSelectModifier) a tap layer over each cell toggles its id.
+struct FeedGridSelectionModifier: ViewModifier {
+    @Environment(\.editMode) private var editMode
+    @Binding var selection: Set<UUID>
+    let feedId: UUID
+
+    private var isSelecting: Bool { editMode?.wrappedValue.isEditing == true }
+    private var isSelected: Bool { selection.contains(feedId) }
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                if isSelecting {
+                    Button {
+                        if isSelected { selection.remove(feedId) } else { selection.insert(feedId) }
+                    } label: {
+                        Color.clear.contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .overlay(alignment: .topLeading) {
+                if isSelecting {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.title3)
+                        .foregroundStyle(isSelected ? Color.accentColor : Color.white)
+                        .background(Circle().fill(.black.opacity(0.25)))
+                        .padding(6)
+                        .accessibilityHidden(true)
+                }
+            }
+            .accessibilityAddTraits(isSelecting && isSelected ? .isSelected : [])
+    }
+}
+
+extension View {
+    func feedGridSelectable(selection: Binding<Set<UUID>>, feedId: UUID) -> some View {
+        modifier(FeedGridSelectionModifier(selection: selection, feedId: feedId))
+    }
+}
