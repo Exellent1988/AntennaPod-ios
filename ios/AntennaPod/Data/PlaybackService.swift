@@ -2503,12 +2503,13 @@ final class PlaybackService: ObservableObject {
         center.nextTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                // Android onSkipToNext: in the car (CarPlay connected) next = skip episode;
-                // otherwise the reassigned hardware Forward button (default fast-forward).
+                // Android PlaybackService: transport-control onSkipToNext skips the episode in car
+                // mode; headset/BT key KEYCODE_MEDIA_NEXT goes through handleKeycode → remapped
+                // prefHardwareForwardButton (default fast-forward). iOS merges both into this command.
                 switch NowPlayingLogic.nextTrackAction(inCar: AppServices.isCarPlayConnected) {
                 case .skipEpisode:
                     self.skipToNextEpisode()
-                case .hardwareButton:
+                case .hardwareButton, .rewind:
                     self.performHardwareButton(self.settings?.hardwareForwardButton ?? HardwareButtonAction.defaultForward)
                 }
             }
@@ -2519,7 +2520,14 @@ final class PlaybackService: ObservableObject {
         center.previousTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                self.performHardwareButton(self.settings?.hardwarePreviousButton ?? HardwareButtonAction.defaultPrevious)
+                // Android onSkipToPrevious (Android Auto / car) always rewinds by the Settings interval and
+                // ignores the remap; headset KEYCODE_MEDIA_PREVIOUS uses prefHardwarePreviousButton.
+                switch NowPlayingLogic.previousTrackAction(inCar: AppServices.isCarPlayConnected) {
+                case .rewind:
+                    self.seek(bySeconds: -self.rewindSeconds)
+                default:
+                    self.performHardwareButton(self.settings?.hardwarePreviousButton ?? HardwareButtonAction.defaultPrevious)
+                }
             }
             return .success
         }
