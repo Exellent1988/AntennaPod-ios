@@ -56,35 +56,35 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
         XCTAssertFalse(AppSettings().enqueueDownloaded, "persisted immediately")
     }
 
-    func testDownloadRequestEnqueuesAtEnqueueLocation() {
+    func testDownloadRequestEnqueuesAtEnqueueLocation() async {
         settings.enqueueDownloaded = true
         settings.enqueueLocation = .front
         store.queue = [episodes[0], episodes[1]]
-        requestDownload(remoteEpisodes[0])
+        await downloads.download(remoteEpisodes[0])
         XCTAssertEqual(store.queue.first?.id, remoteEpisodes[0].id, "Front location")
         XCTAssertEqual(store.queue.count, 3)
     }
 
-    func testFrontKeepsOrderForSeveralDownloads() {
+    func testFrontKeepsOrderForSeveralDownloads() async {
         settings.enqueueDownloaded = true
         settings.enqueueLocation = .front
         store.queue = [episodes[0]]
-        for ep in remoteEpisodes { requestDownload(ep) }
+        for ep in remoteEpisodes { await downloads.download(ep) }
         XCTAssertEqual(store.queue.map(\.id), remoteEpisodes.map(\.id) + [episodes[0].id],
                        "skips items still downloading, like Android ItemEnqueuePositionCalculator")
     }
 
-    func testDisabledDoesNotEnqueue() {
+    func testDisabledDoesNotEnqueue() async {
         settings.enqueueDownloaded = false
-        requestDownload(remoteEpisodes[0])
+        await downloads.download(remoteEpisodes[0])
         XCTAssertFalse(store.isInQueue(remoteEpisodes[0].id))
     }
 
-    func testCancelRemovesOnlyWhatTheDownloadAdded() {
+    func testCancelRemovesOnlyWhatTheDownloadAdded() async {
         settings.enqueueDownloaded = true
         store.queue = [remoteEpisodes[1]]
-        requestDownload(remoteEpisodes[0])
-        requestDownload(remoteEpisodes[1])
+        await downloads.download(remoteEpisodes[0])
+        await downloads.download(remoteEpisodes[1])
         downloads.cancelDownload(remoteEpisodes[0])
         downloads.cancelDownload(remoteEpisodes[1])
         XCTAssertFalse(store.isInQueue(remoteEpisodes[0].id), "added by the download → removed on cancel")
@@ -104,18 +104,4 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
         downloads.delete(episodes[0])
         XCTAssertTrue(store.isInQueue(episodes[0].id))
     }
-
-    /// Drives `DownloadService.download` from a synchronous test. Async test methods in this
-    /// class aborted the test host in swift_task_dealloc_specific (XCTSwiftErrorObservation,
-    /// no app frames) on iOS 26.5, so the async call runs in its own Task.
-    private func requestDownload(_ episode: PodcastEpisode) {
-        let done = expectation(description: "download requested")
-        let service = downloads!
-        Task { @MainActor in
-            await service.download(episode)
-            done.fulfill()
-        }
-        wait(for: [done], timeout: 10)
-    }
-
 }
