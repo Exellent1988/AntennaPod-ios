@@ -198,18 +198,27 @@ struct RootTabView: View {
         content
         .onChange(of: notificationDeepLink.inboxOpenToken) { _, token in
             guard token != nil else { return }
+            clearCoveringPresentations()
             selectedTab = .inbox
+            tabRootResets[.inbox, default: 0] += 1
         }
         .onChange(of: notificationDeepLink.downloadsOpenToken) { _, token in
             guard token != nil else { return }
+            clearCoveringPresentations()
             selectedTab = .downloads
+            tabRootResets[.downloads, default: 0] += 1
         }
         .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, token in
             guard token != nil else { return }
+            // Keep an open Settings sheet (the sync sub-screen is pushed inside it); clear anything else.
+            debugFeed = nil
+            debugEpisodeDetail = nil
+            subscribeLink.requestFullPlayerClose()
             selectedTab = .settings
         }
         .onChange(of: notificationDeepLink.feedOpenToken) { _, token in
             guard token != nil else { return }
+            clearCoveringPresentations()
             selectedTab = .subscriptions
         }
         .onChange(of: subscribeLink.pendingFeedUrl) { _, _ in
@@ -260,10 +269,20 @@ struct RootTabView: View {
     /// Closes the Full Player first and waits like `MiniPlayerView.openPodcastFromMiniPlayer`;
     /// sheets opened by other screens are not closed. Clearing the preview first lets the same
     /// link present again.
+    /// A deep link must land on a visible screen with a way back. Android starts MainActivity with the
+    /// target fragment on top of the back stack (system Back returns); here the Settings sheet, DEBUG sheets
+    /// and the full player would otherwise cover the target tab, and a second sheet cannot be presented.
+    private func clearCoveringPresentations() {
+        showSettings = false
+        debugFeed = nil
+        debugEpisodeDetail = nil
+        subscribeLink.requestFullPlayerClose()
+    }
+
     private func consumeSubscribeLink() {
         guard let feedUrl = subscribeLink.pendingFeedUrl else { return }
         subscribeLink.pendingFeedUrl = nil
-        subscribeLink.requestFullPlayerClose()
+        clearCoveringPresentations()
         subscribeLinkPreview = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             if let feed = FeedURLNormalization.subscribedFeed(matching: feedUrl, in: store.feeds) {
