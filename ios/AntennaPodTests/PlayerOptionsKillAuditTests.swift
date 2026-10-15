@@ -91,4 +91,16 @@ final class PlayerOptionsKillAuditTests: PlaybackFixtureTestCase {
         XCTAssertEqual(settings.showRemainingTime, remaining)
         XCTAssertEqual(settings.playVideoAsAudioOnly, audioOnly)
     }
+
+    /// Speed presets editor (prefPlaybackSpeedArray) incl. the player "Add as preset": survives a kill
+    /// and the relaunched player cycles through the edited list.
+    func testSpeedPresetsSurviveKill() {
+        settings.speedPresets = [1.0, 1.25]
+        XCTAssertTrue(settings.addSpeedPreset(1.85))
+        XCTAssertTrue(settings.removeSpeedPreset(1.25))
+        simulateKillAndRelaunch()
+        XCTAssertEqual(settings.speedPresets, [1.0, 1.85])
+        XCTAssertEqual(playback.settings?.speedPresets, [1.0, 1.85])
+    }
+
 }
