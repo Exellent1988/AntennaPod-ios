@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 import UIKit
 
@@ -13,6 +14,10 @@ struct EpisodeDescriptionSheetView: View {
     @EnvironmentObject private var downloads: DownloadService
 
     let episode: PodcastEpisode
+    /// `<a href>` targets so anchor texts stay tappable after HTML stripping.
+    private var descriptionAnchors: [(text: String, href: String)] {
+        ShowNotesLinks.anchors(inHTML: episode.descriptionText ?? "")
+    }
     /// Optional podcast name for share message (`Title — Podcast`). When empty, looked up from the store.
     var feedTitle: String? = nil
 
@@ -455,7 +460,7 @@ struct EpisodeDescriptionSheetView: View {
                         PodcastChaptersURLView(episode: episode)
                     }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
-                        Text(paragraph)
+                        ShowNotesText(text: paragraph, episode: episode, anchors: descriptionAnchors)
                             .font(.body)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .textSelection(.enabled)
@@ -498,7 +503,7 @@ struct EpisodeDescriptionSheetView: View {
                     if hasChaptersURL {
                         PodcastChaptersURLView(episode: episode)
                     }
-                    Text(plainDescription)
+                    ShowNotesText(text: plainDescription, episode: episode, anchors: descriptionAnchors)
                         .font(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .textSelection(.enabled)

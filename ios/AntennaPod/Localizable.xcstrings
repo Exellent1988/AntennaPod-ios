@@ -54585,6 +54585,56 @@
           }
         }
       }
+    },
+    "Play this episode to jump to positions": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spiele diese Episode ab, um zu Positionen zu springen"
+          }
+        }
+      }
+    },
+    "Swipe left for the shownotes, right for the cover.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach links wischen für die Shownotes, nach rechts für das Cover."
+          }
+        }
+      }
+    },
+    "Share media file": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mediendatei teilen"
+          }
+        }
+      }
+    },
+    "Shares the downloaded audio or video file itself.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die heruntergeladene Audio- oder Videodatei selbst."
+          }
+        }
+      }
+    },
+    "Shares the podcast's RSS feed address.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die RSS-Feed-Adresse des Podcasts."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
