@@ -24,6 +24,21 @@ struct EpisodeMultiSelectModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.editMode, $editMode)
+            .environment(\.startEpisodeSelection, StartEpisodeSelection { id in
+                withAnimation {
+                    selection = [id]
+                    editMode = .active
+                }
+            })
+            #if DEBUG
+            // Screenshots: `-APDebugSelectFirst` does what long-press > Select does on the first episode.
+            .task {
+                guard ProcessInfo.processInfo.arguments.contains("-APDebugSelectFirst"), let first = episodes.first else { return }
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                selection = [first.id]
+                editMode = .active
+            }
+            #endif
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(isSelecting ? String(localized: "Done") : String(localized: "Select")) {
@@ -129,5 +144,41 @@ struct EpisodeMultiSelectModifier: ViewModifier {
 extension View {
     func episodeMultiSelect(selection: Binding<Set<String>>, episodes: [PodcastEpisode]) -> some View {
         modifier(EpisodeMultiSelectModifier(selection: selection, episodes: episodes))
+    }
+}
+
+/// Long-press "Select" (Android feeditemlist_context multi_select): enters multi-select with that
+/// episode already selected. nil in lists without multi-select.
+struct StartEpisodeSelection {
+    let start: (String) -> Void
+    func callAsFunction(_ episodeId: String) { start(episodeId) }
+}
+
+private struct StartEpisodeSelectionKey: EnvironmentKey {
+    static let defaultValue: StartEpisodeSelection? = nil
+}
+
+extension EnvironmentValues {
+    var startEpisodeSelection: StartEpisodeSelection? {
+        get { self[StartEpisodeSelectionKey.self] }
+        set { self[StartEpisodeSelectionKey.self] = newValue }
+    }
+}
+
+/// The "Select" long-press entry; hidden where the list has no multi-select or is already selecting.
+struct SelectEpisodeMenuItem: View {
+    @Environment(\.startEpisodeSelection) private var startSelection
+    @Environment(\.editMode) private var editMode
+    let episodeId: String
+
+    var body: some View {
+        if let startSelection, editMode?.wrappedValue.isEditing != true {
+            Button {
+                startSelection(episodeId)
+            } label: {
+                Label("Select", systemImage: "checkmark.circle")
+            }
+            .accessibilityHint(String(localized: "Starts selecting episodes, with this one already selected."))
+        }
     }
 }

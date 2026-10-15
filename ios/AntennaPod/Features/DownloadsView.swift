@@ -560,6 +560,7 @@ struct DownloadsView: View {
                             Button { detailEpisode = item.episode } label: {
                                 Label("Episode details", systemImage: "info.circle")
                             }
+                            SelectEpisodeMenuItem(episodeId: item.episode.id)
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             // Android SwipeActions: user-configurable; Default keeps these buttons.

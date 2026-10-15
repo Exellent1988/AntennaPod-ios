@@ -3565,6 +3565,7 @@ struct EpisodeRow: View {
                 } label: {
                     Label("Episode details", systemImage: "info.circle")
                 }
+                SelectEpisodeMenuItem(episodeId: episode.id)
                 .accessibilityHint(String(localized: "Opens the episode page. Swipe left or right there for the neighbouring episodes of this podcast."))
             }
             Section {
