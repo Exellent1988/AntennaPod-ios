@@ -10,12 +10,6 @@ enum GpodderSyncLogic {
         SubscriptionSyncPlan.urlsToImport(remote: remote, localFeedURLs: localFeedURLs)
     }
 
-    /// Local feed URLs to unsubscribe for a server `remove` list (incremental sync only).
-    /// A URL that is also in `add` is kept (re-subscribed on another device in the same window).
-    static func feedsToUnsubscribe(remove: [String], add: [String], localFeedURLs: [String]) -> [String] {
-        SubscriptionSyncPlan.feedsToUnsubscribe(remove: remove, add: add, localFeedURLs: localFeedURLs)
-    }
-
     /// Runs `operation` for every item with at most `maxConcurrent` in flight.
     /// Returns per-item errors (item, message) in input order; `progress(done)` after each item.
     static func runBounded(

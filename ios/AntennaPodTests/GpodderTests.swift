@@ -1,3 +1,4 @@
+import PodcastCore
 import XCTest
 @testable import AntennaPod
 
@@ -237,12 +238,20 @@ final class GpodderSyncLogicTests: XCTestCase {
 
 final class GpodderRemovalAndParallelImportTests: XCTestCase {
     func testRemoteRemovalUnsubscribesMatchingLocalFeeds() {
-        let urls = GpodderSyncLogic.feedsToUnsubscribe(
+        let hit = SubscriptionSyncPlan.podcastsToUnsubscribe(
             remove: ["https://A.example/feed/", "https://b.example/feed", "https://gone.example/rss"],
             add: ["https://b.example/feed"],
-            localFeedURLs: ["https://a.example/feed", "https://b.example/feed", "https://keep.example/rss"]
+            localPodcasts: [["https://a.example/feed"], ["https://b.example/feed"], ["https://keep.example/rss"]]
         )
-        XCTAssertEqual(urls, ["https://a.example/feed"])
+        XCTAssertEqual(hit, [0])
+    }
+
+    /// Feed URL changed on the server: remove(old) + add(new) in one round keeps the podcast.
+    func testRemoveOldAddNewSameRoundKeepsPodcast() {
+        let hit = SubscriptionSyncPlan.podcastsToUnsubscribe(
+            remove: ["https://old.example/rss"], add: ["https://new.example/rss"],
+            localPodcasts: [["https://old.example/rss", "https://new.example/rss"]])
+        XCTAssertEqual(hit, [])
     }
 
     func testRunBoundedLimitsConcurrencyAndKeepsPerItemErrors() async {

@@ -3426,8 +3426,9 @@ final class PodcastStore: ObservableObject {
     /// Parse OPML and subscribe each feed URL via the existing fetch/parse pipeline.
     /// Skips URLs already in `feeds`. Records per-URL errors without aborting the batch.
     ///
-    /// Already-subscribed uses `FeedURLNormalization.canonicalKey` (http↔https, trailing slash)
-    /// plus a full lowercase, so `https://host/feed` and `http://host/feed/` are one subscription.
+    /// Already-subscribed uses the gpodder equality `FeedURLKey` (scheme, host case, slashes; query
+    /// exact) against every known address of a podcast (feedUrl + aliases), so OPML import and
+    /// gpodder sync agree on what is one podcast and never produce duplicates.
     /// The stored feed URL is not rewritten when an outline is skipped.
     func importOpml(data: Data, sourceFileName: String? = nil) async {
         opmlImportError = nil
@@ -3437,8 +3438,7 @@ final class PodcastStore: ObservableObject {
         opmlImport = state
         do {
             let outlines = try OpmlReader.parse(data: data)
-            // Deduplicate by canonical feed URL (first wins). Lowercase keeps path/query
-            // case-insensitive, matching the previous full-string compare.
+            // Deduplicate by feed URL key (first wins).
             var seen = Set<String>()
             var unique: [OpmlOutline] = []
             for o in outlines {
@@ -3449,7 +3449,7 @@ final class PodcastStore: ObservableObject {
             }
             state.total = unique.count
             opmlImport = state
-            var subscribed = Set(feeds.map { Self.opmlSubscriptionKey($0.feedUrl) })
+            var subscribed = Set(feeds.flatMap(\.urlKeys))
 
             for outline in unique {
                 state.currentTitle = outline.text
@@ -3465,6 +3465,8 @@ final class PodcastStore: ObservableObject {
                     // An `itpc://` outline is stored (and exported) as https; others unchanged.
                     try await subscribeQuietly(feedUrl: FeedURLNormalization.storedFeedURL(outline.xmlUrl))
                     subscribed.insert(urlKey)
+                    // The stored podcast may have learned more addresses (redirect target).
+                    subscribed.formUnion(feeds.flatMap(\.urlKeys))
                     state.succeeded += 1
                 } catch {
                     state.failures.append(
@@ -3486,9 +3488,11 @@ final class PodcastStore: ObservableObject {
         opmlImport = state
     }
 
-    /// OPML duplicate key: Add-sheet canonical URL (scheme and trailing slash) and case.
-    private static func opmlSubscriptionKey(_ feedUrl: String) -> String {
-        FeedURLNormalization.canonicalKey(feedUrl).lowercased()
+    /// OPML duplicate key: the same equality as gpodder sync and `PodcastFeed.urlKeys`.
+    /// Unparseable outlines keep their raw text, so they stay separate (each reports its error).
+    static func opmlSubscriptionKey(_ feedUrl: String) -> String {
+        let key = FeedURLKey.key(feedUrl)
+        return key.isEmpty ? "raw:" + feedUrl : key
     }
 
     /// Subscribe without flipping the global `isLoading` overlay (used by OPML batch / refresh).

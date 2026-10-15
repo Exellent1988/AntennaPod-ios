@@ -1,3 +1,4 @@
+import PodcastCore
 import XCTest
 @testable import AntennaPod
 
@@ -51,9 +52,9 @@ final class FeedDedupeTests: XCTestCase {
 
     func testRemoteRemoveMatchesAnyAddressOfTheFeed() {
         let local = feed("https://new.example/feed.xml", alternates: ["http://old.example/podcast.xml"])
-        let urls = GpodderSyncLogic.feedsToUnsubscribe(remove: ["https://old.example/podcast.xml"], add: [],
-                                                       localFeedURLs: local.allUrls)
-        XCTAssertFalse(Set(urls.map(FeedURLKey.key)).isDisjoint(with: local.urlKeys))
+        let hit = SubscriptionSyncPlan.podcastsToUnsubscribe(remove: ["https://old.example/podcast.xml"], add: [],
+                                                             localPodcasts: [local.allUrls])
+        XCTAssertEqual(hit, [0])
     }
 
     /// The scheme-less key must not make the http(s) filter drop every URL (import or push).
