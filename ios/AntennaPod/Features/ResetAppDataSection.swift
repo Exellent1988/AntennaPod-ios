@@ -38,9 +38,13 @@ struct ResetAppDataSection: View {
 
     private func reset() {
         isBusy = true
-        store.resetAppData()
         Task {
+            await store.resetAppDataSafely()
+            let loggedIn = gpodder.isLoggedIn
+            if loggedIn { AppMaintenanceLog.record("reset: gpodder re-import started") }
+            // Always: resets the sync cursors even when logged out.
             await gpodder.reimportAfterReset(store: store)
+            if loggedIn { AppMaintenanceLog.record("reset: gpodder re-import finished (feeds \(store.feeds.count))") }
             isBusy = false
         }
     }

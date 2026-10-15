@@ -612,6 +612,19 @@ final class PlaybackService: ObservableObject {
         applyIdleTimerPolicy()
     }
 
+    /// Settings → Reset app data: unload the episode (same as backup import) and release the
+    /// audio session before the catalog is deleted. Player options (speed etc.) are kept.
+    /// Returns whether a player or episode was loaded.
+    @discardableResult
+    func stopForAppDataReset() -> Bool {
+        let hadEpisode = currentEpisode != nil || restoredEpisode != nil || player != nil
+        discardLoadedEpisodeForBackupImport()
+        deactivateSessionAfterPlaybackStopped()
+        return hadEpisode
+    }
+
+    var hasLoadedPlayerForTests: Bool { player != nil }
+
     func setRate(_ newRate: Float) {
         let clamped = Self.clampPlaybackSpeed(newRate)
         rate = clamped
