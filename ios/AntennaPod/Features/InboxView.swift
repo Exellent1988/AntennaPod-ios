@@ -387,7 +387,6 @@ struct InboxView: View {
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var inboxList: some View {
         List(selection: $multiSelection) {
-            TabRootTopAnchor()
             // Sort + filter the Inbox once per body; the info bar, its VoiceOver label, and
             // the rows share it (rows only render when not searching, same as the bar).
             let visibleItems = visibleInboxForRemaining

@@ -20,23 +20,6 @@ final class TabReselectCenter: ObservableObject {
     }
 }
 
-enum TabRootScroll {
-    static let topID = "tabRoot.top"
-}
-
-/// Zero-height first row of a root list; `scrollTo(TabRootScroll.topID)` targets it.
-struct TabRootTopAnchor: View {
-    var body: some View {
-        Color.clear
-            .frame(height: 0)
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
-            .accessibilityHidden(true)
-            .id(TabRootScroll.topID)
-    }
-}
-
 private struct TabReselectCenterKey: EnvironmentKey {
     static let defaultValue: TabReselectCenter? = nil
 }
@@ -68,19 +51,61 @@ private struct TabRootListObserver<Content: View>: View {
     let content: Content
 
     var body: some View {
-        ScrollViewReader { proxy in
-            content
-                .onAppear { center.setRootVisible(tab, true) }
-                .onDisappear { center.setRootVisible(tab, false) }
-                .onChange(of: center.scrollSignal[tab, default: 0]) { _, _ in
-                    withAnimation { proxy.scrollTo(TabRootScroll.topID, anchor: .top) }
-                }
+        // No anchor row (it added a visible gap): scroll the list's own UIScrollView. Empty lists and
+        // empty states just stay put; grid mode in Subscriptions is the same List.
+        content
+            .onAppear { center.setRootVisible(tab, true) }
+            .onDisappear { center.setRootVisible(tab, false) }
+            .background(ScrollToTopProbe(signal: center.scrollSignal[tab, default: 0]))
+    }
+}
+
+/// Invisible view behind a root List; on a new signal it finds the List's vertical scroll view and
+/// scrolls it to the top (like UITabBarController's re-tap).
+private struct ScrollToTopProbe: UIViewRepresentable {
+    let signal: Int
+
+    final class Coordinator { var lastSignal: Int; init(_ s: Int) { lastSignal = s } }
+    func makeCoordinator() -> Coordinator { Coordinator(signal) }
+
+    func makeUIView(context: Context) -> UIView {
+        let v = UIView()
+        v.isUserInteractionEnabled = false
+        v.isHidden = true
+        return v
+    }
+
+    func updateUIView(_ view: UIView, context: Context) {
+        guard signal != context.coordinator.lastSignal else { return }
+        context.coordinator.lastSignal = signal
+        DispatchQueue.main.async {
+            guard let scroll = Self.listScrollView(near: view) else { return }
+            let top = CGPoint(x: scroll.contentOffset.x, y: -scroll.adjustedContentInset.top)
+            scroll.setContentOffset(top, animated: true)
         }
+    }
+
+    /// Nearest ancestor's first visible, vertically scrolling collection/table view (breadth-first).
+    private static func listScrollView(near view: UIView) -> UIScrollView? {
+        var ancestor = view.superview
+        while let a = ancestor {
+            var queue: [UIView] = [a]
+            while !queue.isEmpty {
+                let v = queue.removeFirst()
+                if let s = v as? UIScrollView, s is UICollectionView || s is UITableView,
+                   s.window != nil, !s.isHidden {
+                    return s
+                }
+                queue.append(contentsOf: v.subviews)
+            }
+            ancestor = a.superview
+        }
+        return nil
     }
 }
 
 extension View {
-    /// Marks the root list of a tab (put `TabRootTopAnchor()` first inside it).
+    /// Marks the root list of a tab for re-tap pop / scroll-to-top.
     func tabRootList(_ tab: RootTab) -> some View {
         modifier(TabRootListModifier(tab: tab))
     }

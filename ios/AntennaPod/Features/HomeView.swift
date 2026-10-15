@@ -622,7 +622,6 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             List {
-                TabRootTopAnchor()
                 ForEach(settings.visibleHomeSections) { sectionId in
                     homeSection(for: sectionId)
                     emptySectionPlaceholder(for: sectionId)

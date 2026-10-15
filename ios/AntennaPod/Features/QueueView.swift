@@ -391,7 +391,6 @@ struct QueueView: View {
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var queueList: some View {
         List {
-            TabRootTopAnchor()
             Section {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {

@@ -381,7 +381,6 @@ struct DownloadsView: View {
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var downloadsList: some View {
         List(selection: $multiSelection) {
-            TabRootTopAnchor()
             if let error = downloads.lastError {
                 Section {
                     HStack(alignment: .top, spacing: 12) {
