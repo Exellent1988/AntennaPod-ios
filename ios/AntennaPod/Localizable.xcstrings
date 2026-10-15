@@ -52397,6 +52397,56 @@
           }
         }
       }
+    },
+    "Headphones reconnect": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopfhörer wieder eingesteckt"
+          }
+        }
+      }
+    },
+    "Bluetooth reconnect": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth wieder verbunden"
+          }
+        }
+      }
+    },
+    "Resumes playback when wired headphones that paused it are plugged back in. Default on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt die Wiedergabe fort, wenn die kabelgebundenen Kopfhörer, deren Trennen sie pausiert hat, wieder eingesteckt werden. Standard: an."
+          }
+        }
+      }
+    },
+    "Resumes playback when the Bluetooth device that paused it reconnects. Default off.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt die Wiedergabe fort, wenn das Bluetooth-Gerät, dessen Trennen sie pausiert hat, wieder verbunden ist. Standard: aus."
+          }
+        }
+      }
+    },
+    "Resume playback when the headphones or Bluetooth device that paused it reconnects within 30 minutes. Only after an unplug pause; a pause you made yourself never resumes on its own.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabe fortsetzen, wenn die Kopfhörer oder das Bluetooth-Gerät, deren Trennen sie pausiert hat, innerhalb von 30 Minuten wieder verbunden werden. Nur nach einer Pause durch Trennen; eine selbst gesetzte Pause wird nie von allein fortgesetzt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

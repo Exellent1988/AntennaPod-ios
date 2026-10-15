@@ -172,6 +172,9 @@ final class PlaybackService: ObservableObject {
     private var audioSessionObserversConfigured = false
     /// Set on interruption began when we were playing; honored on ended + shouldResume.
     private var resumeAfterInterruption = false
+    /// Set when a headset / Bluetooth unplug paused playback (Android `transientPause`); a user
+    /// play / pause / stop or a new episode clears it. Read by the reconnect resume.
+    private(set) var pausedByUnplugAt: Date?
     private var lastNowPlayingUpdateAt: Date = .distantPast
     private var cachedArtworkURL: String?
     private var cachedArtwork: MPMediaItemArtwork?
@@ -265,6 +268,7 @@ final class PlaybackService: ObservableObject {
         preferredMediaURL: URL? = nil,
         fromBeginning: Bool = false
     ) -> Bool {
+        pausedByUnplugAt = nil
         if shouldKeepLoadedPlayer(
             episode: episode,
             fileURL: fileURL,
@@ -433,6 +437,7 @@ final class PlaybackService: ObservableObject {
     }
 
     func togglePlayPause() {
+        pausedByUnplugAt = nil
         guard let player else {
             // Cold launch: the restored placeholder starts through the normal play path.
             if currentEpisode == nil, restoredEpisode != nil {
@@ -522,6 +527,7 @@ final class PlaybackService: ObservableObject {
     }
 
     func stop() {
+        pausedByUnplugAt = nil
         resumeAfterInterruption = false
         pausedAt = nil
         clearSoundbiteEndMarker()
@@ -2282,6 +2288,41 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// Unplug pause + Android "Headphones / Bluetooth reconnect" resume. Returns `true` when the
+    /// event was fully handled (unplug). Internal so tests can drive it without hardware.
+    @discardableResult
+    func handleRouteChange(
+        reason: AVAudioSession.RouteChangeReason,
+        currentOutputPorts: [String],
+        now: Date = Date()
+    ) -> Bool {
+        switch reason {
+        case .oldDeviceUnavailable:
+            // Headphones / wireless audio device became unavailable — standard pause.
+            resumeAfterInterruption = false
+            if isPlaying || (player?.rate ?? 0) > 0 {
+                pauseForAudioSessionEvent()
+                pausedByUnplugAt = now
+            }
+            return true
+        case .newDeviceAvailable:
+            let resume = ReconnectResumePolicy.shouldResume(
+                pausedByUnplugAt: pausedByUnplugAt,
+                now: now,
+                newRoute: AudioRouteKind.kind(ofOutputPorts: currentOutputPorts),
+                resumeOnHeadphones: settings?.resumeOnHeadphonesReconnect ?? ReconnectResumePolicy.defaultResumeOnHeadphones,
+                resumeOnBluetooth: settings?.resumeOnBluetoothReconnect ?? ReconnectResumePolicy.defaultResumeOnBluetooth
+            )
+            if resume, !isPlaying, currentEpisode != nil, player != nil {
+                pausedByUnplugAt = nil
+                resumeAfterAudioSessionEvent()
+            }
+            return false
+        default:
+            return false
+        }
+    }
+
     private func handleRouteChange(_ notification: Notification) {
         guard
             let info = notification.userInfo,
@@ -2290,15 +2331,8 @@ final class PlaybackService: ObservableObject {
         else {
             return
         }
-        // Headphones / wireless audio device became unavailable — standard pause.
-        // Do not treat newDeviceAvailable / category changes as pause.
-        if reason == .oldDeviceUnavailable {
-            resumeAfterInterruption = false
-            if isPlaying || (player?.rate ?? 0) > 0 {
-                pauseForAudioSessionEvent()
-            }
-            return
-        }
+        let outputs = AVAudioSession.sharedInstance().currentRoute.outputs.map(\.portType.rawValue)
+        if handleRouteChange(reason: reason, currentOutputPorts: outputs) { return }
         // Re-apply Stereo to mono (preferred output channels) when the route changes
         // (new device, category, override) so the preference sticks across speaker ↔ BT ↔ CarPlay.
         // Best-effort only — system may still ignore preferred channel count on the new route.

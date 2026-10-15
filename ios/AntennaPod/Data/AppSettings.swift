@@ -1377,6 +1377,8 @@ final class AppSettings: ObservableObject {
         static let showRemainingTime = "settings.showRemainingTime"
         static let remainingTimeRespectsSpeed = "settings.remainingTimeRespectsSpeed"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
+        static let resumeOnBluetoothReconnect = "settings.resumeOnBluetoothReconnect"
+        static let resumeOnHeadphonesReconnect = "settings.resumeOnHeadphonesReconnect"
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
@@ -1953,6 +1955,16 @@ final class AppSettings: ObservableObject {
 
     /// Seconds to seek backward when resuming after a pause ≥ 1s (0 = off). Default **2**.
     /// Honest beta: fixed amount (not Android `RewindAfterPauseUtils` elapsed tiers). Only after an actual pause of the current item — not cold play / first start.
+    /// Android `prefUnpauseOnHeadsetReconnect` (default on): resume after a wired headset that paused playback is plugged back in.
+    @Published var resumeOnHeadphonesReconnect: Bool {
+        didSet { UserDefaults.standard.set(resumeOnHeadphonesReconnect, forKey: Keys.resumeOnHeadphonesReconnect) }
+    }
+
+    /// Android `prefUnpauseOnBluetoothReconnect` (default off): resume when the Bluetooth device that paused playback reconnects.
+    @Published var resumeOnBluetoothReconnect: Bool {
+        didSet { UserDefaults.standard.set(resumeOnBluetoothReconnect, forKey: Keys.resumeOnBluetoothReconnect) }
+    }
+
     @Published var rewindAfterPauseSeconds: Int {
         didSet {
             UserDefaults.standard.set(rewindAfterPauseSeconds, forKey: Keys.rewindAfterPauseSeconds)
@@ -2643,6 +2655,8 @@ final class AppSettings: ObservableObject {
             remainingTimeRespectsSpeed = false
         }
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
+        resumeOnBluetoothReconnect = UserDefaults.standard.object(forKey: Keys.resumeOnBluetoothReconnect) as? Bool ?? ReconnectResumePolicy.defaultResumeOnBluetooth
+        resumeOnHeadphonesReconnect = UserDefaults.standard.object(forKey: Keys.resumeOnHeadphonesReconnect) as? Bool ?? ReconnectResumePolicy.defaultResumeOnHeadphones
         smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
@@ -3085,6 +3099,8 @@ final class AppSettings: ObservableObject {
             showRemainingTime: showRemainingTime,
             remainingTimeRespectsSpeed: remainingTimeRespectsSpeed,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
+            resumeOnBluetoothReconnect: resumeOnBluetoothReconnect,
+            resumeOnHeadphonesReconnect: resumeOnHeadphonesReconnect,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
             chartsCountryCode: chartsCountryCode,
             discoverChartsLimit: discoverChartsLimit.rawValue,
@@ -3230,6 +3246,8 @@ final class AppSettings: ObservableObject {
         resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
         showRemainingTime = snap.showRemainingTime ?? false
         remainingTimeRespectsSpeed = snap.remainingTimeRespectsSpeed ?? false
+        resumeOnHeadphonesReconnect = snap.resumeOnHeadphonesReconnect ?? ReconnectResumePolicy.defaultResumeOnHeadphones
+        resumeOnBluetoothReconnect = snap.resumeOnBluetoothReconnect ?? ReconnectResumePolicy.defaultResumeOnBluetooth
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
             ? rewindAfter
@@ -3476,6 +3494,10 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var remainingTimeRespectsSpeed: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).
     var rewindAfterPauseSeconds: Int? = 2
+    /// Absent in older backups → default.
+    var resumeOnBluetoothReconnect: Bool? = nil
+    /// Absent in older backups → default.
+    var resumeOnHeadphonesReconnect: Bool? = nil
     /// Absent in older backups → treated as 30 (AntennaPod default).
     var smartMarkAsPlayedSeconds: Int? = 30
     var chartsCountryCode: String
