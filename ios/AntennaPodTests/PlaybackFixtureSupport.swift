@@ -22,6 +22,7 @@ class PlaybackFixtureTestCase: XCTestCase {
 
     override func setUp() async throws {
         rawSettings = SettingsLeakObserver.snapshot()
+        PlaybackService.muteOutputForTests = true   // no audible tones on the simulator
         settings = AppSettings()
         settingsSnapshot = settings.backupSnapshot()
         settings.continuousPlaybackMode = .queue
@@ -66,6 +67,7 @@ class PlaybackFixtureTestCase: XCTestCase {
         // (and remove keys that did not exist) so the test leaves persisted settings untouched.
         SettingsLeakObserver.restore(rawSettings, over: SettingsLeakObserver.snapshot())
         try? FileManager.default.removeItem(at: fixtureDir)
+        PlaybackService.muteOutputForTests = false
     }
 
     // MARK: Helpers

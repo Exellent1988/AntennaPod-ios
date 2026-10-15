@@ -144,6 +144,10 @@ final class PlaybackService: ObservableObject {
     }
 
     private var player: AVPlayer?
+    #if DEBUG
+    /// Tests: real AVPlayer playback without audible output on the simulator (set by PlaybackFixtureTestCase).
+    static var muteOutputForTests = false
+    #endif
     /// Shared player for the full-player video surface (`AVPlayerLayer` / `EpisodeVideoSurface`).
     /// Nil when nothing is loaded. Lockscreen / Now Playing stays metadata-only (no video).
     var avPlayer: AVPlayer? { player }
@@ -390,6 +394,9 @@ final class PlaybackService: ObservableObject {
         newPlayer.rate = rate
         // Sleep-timer fade uses player.volume (0…1). Soft boost (>100%) uses AVAudioMix on the item.
         newPlayer.volume = sleepVolume
+        #if DEBUG
+        newPlayer.isMuted = Self.muteOutputForTests
+        #endif
         player = newPlayer
         installAudioPipeline(on: item)
         applyVideoAsAudioOnlyPolicy(to: item)
