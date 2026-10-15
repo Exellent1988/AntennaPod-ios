@@ -53,4 +53,10 @@ final class SubscriptionsGridParityTests: XCTestCase {
         XCTAssertFalse(SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: true, showsManageTags: true, showsDiscover: false), "Manage tags")
         XCTAssertFalse(SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: true, showsManageTags: false, showsDiscover: true), "Discover")
     }
+
+    func testAddPodcastQuickDiscoveryUntilFirstSearch() {
+        XCTAssertTrue(AddFeedView.showsQuickDiscovery(didSearch: false, hasResults: false))
+        XCTAssertFalse(AddFeedView.showsQuickDiscovery(didSearch: true, hasResults: false))
+        XCTAssertFalse(AddFeedView.showsQuickDiscovery(didSearch: true, hasResults: true))
+    }
 }

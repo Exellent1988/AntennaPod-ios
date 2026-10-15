@@ -54271,6 +54271,23 @@
           }
         }
       }
+    },
+    "Discover more": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discover more"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mehr entdecken »"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
