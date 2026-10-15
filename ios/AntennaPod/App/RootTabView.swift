@@ -147,7 +147,8 @@ struct RootTabView: View {
                 .modifier(TabMiniPlayerInset(tab: .inbox, selectedTab: selectedTab))
                 // Same source as Inbox list (`PodcastStore.inboxEpisodes`).
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
-                .badge(store.inboxEpisodes.count)
+                // Settings toggle "Show new episodes badge" (off = no badge; Inbox list unchanged).
+                .badge(AppSettings.newEpisodesBadgeValue(inboxCount: store.inboxEpisodes.count, enabled: settings.showNewEpisodesBadge))
             SubscriptionsView()
                 .id(tabRootResets[.subscriptions, default: 0])
                 .tabItem {

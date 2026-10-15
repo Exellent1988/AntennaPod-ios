@@ -654,17 +654,25 @@ struct InboxView: View {
                     String(localized: "Asks for confirmation, then marks played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Ignores podcast, episode type, search, and sort filters. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
                 )
 
+                // Android inbox.xml remove_all_inbox_item (InboxFragment.removeAllFromInbox → DBWriter.removeAllNewFlags,
+                // after ConfirmationDialog remove_all_inbox_label / remove_all_inbox_confirmation_msg).
+                // Leaving the Inbox on iOS means archiving (PodcastStore.archiveAllInbox).
                 Button {
                     showArchiveAllConfirm = true
                 } label: {
-                    Label("Archive all", systemImage: "archivebox")
+                    Label("Remove all from inbox", systemImage: "tray.and.arrow.up")
                 }
                 // Full Inbox catalog — not the podcast/type-chip filtered subset.
                 .disabled(archiveAllInboxCandidatesCount == 0)
-                .accessibilityLabel(String(localized: "Archive all"))
+                .accessibilityLabel(String(localized: "Remove all from inbox"))
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                 )
+                Divider()
+                // iOS switch for the always-visible Inbox tab badge (Android shows the count only in the nav drawer).
+                Toggle(isOn: $settings.showNewEpisodesBadge) {
+                    Label("Show new episodes badge", systemImage: "app.badge")
+                }
                 Divider()
                 // Android SwipeActionsDialog for this screen (SwipeActions tag inbox).
                 SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
@@ -747,16 +755,16 @@ struct InboxView: View {
             Text("Marks \(markAllInboxUnplayedCandidatesCount) played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Uses the catalog scope, not the podcast, episode type, search, or sort filter. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
         }
         .confirmationDialog(
-            "Archive all?",
+            "Remove all from inbox?",
             isPresented: $showArchiveAllConfirm,
             titleVisibility: .visible
         ) {
-            Button("Archive all") {
+            Button("Remove all from inbox", role: .destructive) {
                 store.archiveAllInbox()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Archives \(archiveAllInboxCandidatesCount) non-archived Inbox episode(s) in the full Inbox catalog (newest first), not the podcast, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+            Text("Please confirm that you want to remove all from the inbox.")
         }
         .confirmationDialog(
             "Remove from queue?",
