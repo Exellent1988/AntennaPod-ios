@@ -52431,6 +52431,159 @@
           }
         }
       }
+    },
+    "gpodder.net rejected the login (HTTP 401) — check the username and password.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net rejected the login (HTTP 401) — check the username and password."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net hat die Anmeldung abgelehnt (HTTP 401) – Benutzername und Passwort prüfen."
+          }
+        }
+      }
+    },
+    "No internet connection — sync will be retried next time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No internet connection — sync will be retried next time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Internetverbindung – die Synchronisierung wird beim nächsten Mal erneut versucht."
+          }
+        }
+      }
+    },
+    "Connection to the sync server was lost — try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection to the sync server was lost — try again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbindung zum Sync-Server wurde unterbrochen – bitte erneut versuchen."
+          }
+        }
+      }
+    },
+    "Sync server did not respond in time (timeout) — tried 3 times, try again later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync server did not respond in time (timeout) — tried 3 times, try again later."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Sync-Server hat nicht rechtzeitig geantwortet (Zeitüberschreitung) – 3 Versuche, bitte später erneut probieren."
+          }
+        }
+      }
+    },
+    "Sync server is offline or refuses the connection — check the host URL or try again later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync server is offline or refuses the connection — check the host URL or try again later."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Sync-Server ist offline oder lehnt die Verbindung ab – Server-Adresse prüfen oder später erneut versuchen."
+          }
+        }
+      }
+    },
+    "Network error while syncing (code %lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network error while syncing (code %lld)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerkfehler bei der Synchronisierung (Code %lld)"
+          }
+        }
+      }
+    },
+    "The sync server redirected to an insecure (http) address — stopped to protect your password. Check the server URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sync server redirected to an insecure (http) address — stopped to protect your password. Check the server URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Sync-Server hat auf eine unsichere (http-)Adresse umgeleitet – zum Schutz deines Passworts abgebrochen. Bitte die Server-Adresse prüfen."
+          }
+        }
+      }
+    },
+    "The sync server redirected to another server (%@) — stopped to protect your password. Enter that address directly if it is correct.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The sync server redirected to another server (%@) — stopped to protect your password. Enter that address directly if it is correct."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Sync-Server hat auf einen anderen Server (%@) umgeleitet – zum Schutz deines Passworts abgebrochen. Trage diese Adresse direkt ein, wenn sie stimmt."
+          }
+        }
+      }
+    },
+    "Too many redirects from the sync server — check the server URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many redirects from the sync server — check the server URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu viele Umleitungen vom Sync-Server – bitte die Server-Adresse prüfen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
