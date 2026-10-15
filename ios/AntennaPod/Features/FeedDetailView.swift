@@ -1422,6 +1422,16 @@ struct FeedDetailView: View {
                         Label("Refresh", systemImage: "arrow.clockwise")
                     }
                     .accessibilityHint(String(localized: "Checks this podcast for new episodes. No confirmation."))
+                    // Android feedlist.xml refresh_complete_item (FeedItemlistFragment: reset paging, runOnce).
+                    // iOS keeps every episode it has seen, so a full re-fetch cannot re-add removed ones: no confirmation.
+                    if !LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                        Button {
+                            Task { await store.refresh(liveFeed, complete: true) }
+                        } label: {
+                            Label("Refresh complete", systemImage: "arrow.triangle.2.circlepath")
+                        }
+                        .accessibilityHint(String(localized: "Downloads the whole feed again, bypassing cached copies, and updates all episode details."))
+                    }
                     if let url = liveFeed.websiteURL {
                         Button {
                             openURL(url)

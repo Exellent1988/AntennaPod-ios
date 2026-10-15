@@ -494,7 +494,8 @@ final class PodcastStore: ObservableObject {
     /// Returns this refresh's own error (nil on success), so a caller does not read a Refresh all
     /// error that the shared `lastError` may hold while both run.
     @discardableResult
-    func refresh(_ feed: PodcastFeed) async -> String? {
+    /// `complete`: Android feedlist.xml refresh_complete_item, a full re-fetch bypassing caches.
+    func refresh(_ feed: PodcastFeed, complete: Bool = false) async -> String? {
         guard !feed.feedUrl.isEmpty else {
             return nil
         }
@@ -511,7 +512,7 @@ final class PodcastStore: ObservableObject {
             // podcast's banner up (clear only via clearRefreshError on success below).
             beginLoadingOperation()
             do {
-                newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
+                newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true, ignoreCache: complete)
             } catch {
                 ownError = error.localizedDescription
                 setRefreshError(error.localizedDescription, feed: feeds.first(where: { $0.feedUrl == feed.feedUrl }) ?? feed)
@@ -3301,11 +3302,12 @@ final class PodcastStore: ObservableObject {
         feedUrl: String,
         credentials: FeedHttpBasicCredentials? = nil,
         persistCredentials: Bool = false,
-        onlyIfSubscribed: Bool = false
+        onlyIfSubscribed: Bool = false,
+        ignoreCache: Bool = false
     ) async throws -> [PodcastEpisode] {
         var newcomers: [PodcastEpisode] = []
         let resolvedCreds = credentials ?? httpBasicCredentials(forFeedUrl: feedUrl)
-        var feed = try await repository.fetchAndParse(feedUrl: feedUrl, credentials: resolvedCreds)
+        var feed = try await repository.fetchAndParse(feedUrl: feedUrl, credentials: resolvedCreds, ignoreCache: ignoreCache)
         feed.feedUrl = feedUrl
         // Stamp only on successful network fetch+parse. Failed refresh throws before this
         // and leaves any previous `lastRefreshedAtEpochMs` untouched. Local-folder feeds

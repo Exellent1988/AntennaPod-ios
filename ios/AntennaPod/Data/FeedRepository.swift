@@ -38,12 +38,32 @@ struct FeedRepository {
         }
     }
 
+    /// Feed GET. `ignoreCache` ("Refresh complete") skips URLCache and asks proxies/CDNs for a fresh copy,
+    /// the iOS counterpart of Android resetting the feed's lastModified / paging state before a full update.
+    static func feedRequest(url: URL, credentials: FeedHttpBasicCredentials?, ignoreCache: Bool) -> URLRequest {
+        var request = URLRequest(url: url)
+        AppUserAgent.apply(to: &request)
+        request.setValue(
+            "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
+            forHTTPHeaderField: "Accept"
+        )
+        request.timeoutInterval = Self.timeoutSeconds
+        FeedHttpBasicAuth.apply(credentials, to: &request)
+        if ignoreCache {
+            request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+            request.setValue("no-cache", forHTTPHeaderField: "Cache-Control")
+            request.setValue("no-cache", forHTTPHeaderField: "Pragma")
+        }
+        return request
+    }
+
     /// Fetches and parses a feed URL.
     /// - Parameter credentials: Optional HTTP Basic credentials (never logged). When set,
     ///   sends `Authorization` on the feed request. Used for private feeds.
     func fetchAndParse(
         feedUrl: String,
-        credentials: FeedHttpBasicCredentials? = nil
+        credentials: FeedHttpBasicCredentials? = nil,
+        ignoreCache: Bool = false
     ) async throws -> PodcastFeed {
         let resolved: String
         switch FeedURLNormalization.normalize(feedUrl) {
@@ -57,14 +77,7 @@ struct FeedRepository {
             throw FetchError.invalidURL
         }
 
-        var request = URLRequest(url: url)
-        AppUserAgent.apply(to: &request)
-        request.setValue(
-            "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
-            forHTTPHeaderField: "Accept"
-        )
-        request.timeoutInterval = Self.timeoutSeconds
-        FeedHttpBasicAuth.apply(credentials, to: &request)
+        let request = Self.feedRequest(url: url, credentials: credentials, ignoreCache: ignoreCache)
 
         let data: Data
         let response: URLResponse

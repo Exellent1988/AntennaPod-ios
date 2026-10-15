@@ -154,6 +154,23 @@
         }
       }
     },
+    "Downloads the whole feed again, bypassing cached copies, and updates all episode details.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads the whole feed again, bypassing cached copies, and updates all episode details."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt den ganzen Feed neu, ohne zwischengespeicherte Kopien, und aktualisiert alle Episodendetails."
+          }
+        }
+      }
+    },
     "Episode %lld of %lld": {
       "extractionState": "manual",
       "localizations": {
@@ -252,6 +269,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Als ungespielt markieren"
+          }
+        }
+      }
+    },
+    "Refresh complete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh complete"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollständig aktualisieren"
           }
         }
       }
