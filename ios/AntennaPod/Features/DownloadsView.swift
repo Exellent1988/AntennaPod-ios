@@ -1106,15 +1106,14 @@ struct DownloadErrorsView: View {
         }
     }
 
-    /// Completed downloads still on disk, newest first, filtered by the same search (capped at 100).
-    private var completedLog: [DownloadedEpisode] {
-        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let sorted = downloads.downloads.sorted { ($0.downloadedAtEpochMs ?? 0) > ($1.downloadedAtEpochMs ?? 0) }
-        let matched = q.isEmpty ? sorted : sorted.filter {
-            $0.episode.title.lowercased().contains(q)
-                || store.displayTitle(containingEpisodeId: $0.episode.id).lowercased().contains(q)
+    /// Persisted history (successes + failures), newest first, filtered by the same search.
+    private var historyLog: [DownloadHistoryEntry] {
+        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return downloads.history }
+        return downloads.history.filter {
+            $0.episodeTitle.localizedSearchContains(q) || $0.feedTitle.localizedSearchContains(q)
+                || ($0.message?.localizedSearchContains(q) ?? false)
         }
-        return Array(matched.prefix(100))
     }
 
     var body: some View {
@@ -1146,27 +1145,20 @@ struct DownloadErrorsView: View {
                     DownloadErrorRow(entry: entry)
                 }
             }
-            // Android DownloadLogFragment also lists successful downloads. iOS has no success
-            // log, so this shows the completed files still on disk, newest first.
-            if !completedLog.isEmpty {
-                Section("Completed") {
-                    ForEach(completedLog) { item in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Label(item.episode.title, systemImage: "checkmark.circle.fill")
-                                .font(.subheadline)
-                                .lineLimit(2)
-                            HStack(spacing: 6) {
-                                Text(store.displayTitle(containingEpisodeId: item.episode.id))
-                                    .lineLimit(1)
-                                if let ms = item.downloadedAtEpochMs {
-                                    Text("·").accessibilityHidden(true)
-                                    Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .relative)
-                                }
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        }
-                        .accessibilityElement(children: .combine)
+            // Android DownloadLogFragment: every DownloadResult (success and failure) with date and size.
+            if !historyLog.isEmpty {
+                Section {
+                    ForEach(historyLog) { entry in
+                        DownloadHistoryRow(entry: entry)
+                    }
+                } header: {
+                    Text("History")
+                } footer: {
+                    Text("Last \(DownloadHistoryLog.capacity) downloads.")
+                }
+                Section {
+                    Button("Clear history", role: .destructive) {
+                        downloads.clearDownloadHistory()
                     }
                 }
             }
@@ -1328,5 +1320,40 @@ private struct DownloadErrorRow: View {
             return String(localized: "Download already in progress")
         }
         return String(localized: "Episode is no longer in the library or has no downloadable URL")
+    }
+}
+
+/// One Download log history row: status icon, title, podcast, date, size or failure reason.
+struct DownloadHistoryRow: View {
+    let entry: DownloadHistoryEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Label {
+                Text(entry.episodeTitle).lineLimit(2)
+            } icon: {
+                Image(systemName: entry.succeeded ? "checkmark.circle.fill" : "xmark.octagon.fill")
+                    .foregroundStyle(entry.succeeded ? .green : .red)
+            }
+            .font(.subheadline)
+            HStack(spacing: 6) {
+                if !entry.feedTitle.isEmpty {
+                    Text(entry.feedTitle).lineLimit(1)
+                    Text("·").accessibilityHidden(true)
+                }
+                Text(Date(timeIntervalSince1970: Double(entry.timestampEpochMs) / 1000), style: .date)
+                if let bytes = entry.byteSize {
+                    Text("·").accessibilityHidden(true)
+                    Text(ByteCountFormatter.string(fromByteCount: bytes, countStyle: .file)).monospacedDigit()
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            if let message = entry.message, !entry.succeeded {
+                Text(message).font(.caption).foregroundStyle(.red).lineLimit(2)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text(entry.succeeded ? "Downloaded" : "Download failed") + Text(", ") + Text(entry.episodeTitle))
     }
 }

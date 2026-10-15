@@ -205,6 +205,23 @@
         }
       }
     },
+    "Last %lld downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last %lld downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte %lld Downloads."
+          }
+        }
+      }
+    },
     "Mark as played": {
       "extractionState": "manual",
       "localizations": {
