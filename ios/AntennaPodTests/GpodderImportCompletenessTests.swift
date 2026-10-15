@@ -73,15 +73,19 @@ final class GpodderImportCompletenessTests: XCTestCase {
             subscribe: fakeSubscribe(redirects: ["https://logbuch-netzpolitik.de/feed/mp3": "https://feeds.metaebene.me/lnp/mp3"],
                                      failing: ["https://broken.example/rss"]))
         store.mergeDuplicateFeeds()
-        let keys = store.feeds.map { FeedURLKey.key($0.feedUrl) }
-        XCTAssertEqual(Set(keys), ["feeds.metaebene.me/lnp/mp3", "feeds.simplecast.com/54nagcil",
-                                   "broken.example/rss", "ok.example/a.xml"])
-        XCTAssertEqual(keys.count, Set(keys).count, "no duplicate podcasts")
+        // Import runs concurrently (importConcurrency): whichever of a redirect pair is stored first keeps
+        // its feedUrl, the other becomes an alias. So check groups by urlKeys, never the primary URL.
+        XCTAssertEqual(store.feeds.count, 4, "every server podcast exactly once: \(store.feeds.map(\.feedUrl))")
+        for key in ["feeds.metaebene.me/lnp/mp3", "logbuch-netzpolitik.de/feed/mp3", "feeds.simplecast.com/54nagcil",
+                    "broken.example/rss", "ok.example/a.xml"] {
+            XCTAssertEqual(store.feeds.filter { $0.urlKeys.contains(key) }.count, 1, "\(key) in exactly one podcast")
+        }
+        XCTAssertFalse(store.feeds.contains { $0.urlKeys.contains("ignored.example/rss") }, "non-http URL ignored")
         XCTAssertEqual(result.failures.map(\.url), ["https://broken.example/rss"])
         let broken = store.feeds.first { $0.feedUrl == "https://broken.example/rss" }
         XCTAssertNotNil(broken?.loadError, "failed feed kept as placeholder, not missing")
-        let lnp = store.feeds.first { FeedURLKey.key($0.feedUrl) == "feeds.metaebene.me/lnp/mp3" }
-        XCTAssertTrue(lnp?.urlKeys.contains("logbuch-netzpolitik.de/feed/mp3") == true, "redirect source kept as alias")
+        let lnp = store.feeds.first { $0.urlKeys.contains("feeds.metaebene.me/lnp/mp3") }
+        XCTAssertTrue(lnp?.urlKeys.contains("logbuch-netzpolitik.de/feed/mp3") == true, "redirect source and target fold into one podcast")
     }
 
     func testSecondImportAddsNothing() async {
