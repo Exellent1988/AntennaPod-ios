@@ -35,6 +35,11 @@ enum CarPlayParity {
         templateMax > 0 ? min(androidMaxItems, templateMax) : androidMaxItems
     }
 
+    /// Android Auto skips items without media (`getMedia() == null`): a non-blank enclosure URL or a local file.
+    static func hasMedia(downloadUrl: String?, isDownloaded: Bool) -> Bool {
+        isDownloaded || !(downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+    }
+
     /// Fraction for `CPListItem.playbackProgress`: 0 when unstarted/unknown, 1 when played.
     static func progress(_ e: CarPlayEpisodeInfo) -> Double {
         if e.isPlayed { return 1 }

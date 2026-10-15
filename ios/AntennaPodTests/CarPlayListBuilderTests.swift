@@ -98,4 +98,19 @@ final class CarPlayListBuilderTests: XCTestCase {
         let dl = b.allEpisodeInfos().map { var i = $0; i.isDownloaded = true; return i }
         XCTAssertEqual(CarPlayParity.downloads(dl, sort: .newestFirst, limit: 100).count, 100)
     }
+
+    func testMedialessEpisodesSkippedLikeAndroidAuto() {
+        var noMedia = Self.ep("nm-\(g1)", "No media", date: 9)
+        noMedia.downloadUrl = nil
+        var f = feeds[0]; f.episodes.append(noMedia)
+        store.feeds = savedFeeds + [f] + feeds.dropFirst()
+        store.queue = [noMedia, feeds[0].episodes[0]]
+        let b = builder()
+        XCTAssertFalse(b.allEpisodeInfos().contains { $0.id == noMedia.id })
+        XCTAssertFalse(b.feedEpisodeRows(f.id).contains { $0.title == "No media" })
+        XCTAssertEqual(b.queueSections().last?.1.map(\.title), ["One (http)"])
+        XCTAssertEqual(b.upNextRows().map(\.title), ["One (http)"])
+        XCTAssertFalse(CarPlayParity.hasMedia(downloadUrl: " ", isDownloaded: false))
+        XCTAssertTrue(CarPlayParity.hasMedia(downloadUrl: nil, isDownloaded: true))
+    }
 }
