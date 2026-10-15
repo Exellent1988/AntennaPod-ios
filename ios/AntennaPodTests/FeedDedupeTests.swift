@@ -56,6 +56,13 @@ final class FeedDedupeTests: XCTestCase {
         XCTAssertFalse(Set(urls.map(FeedURLKey.key)).isDisjoint(with: local.urlKeys))
     }
 
+    /// The scheme-less key must not make the http(s) filter drop every URL (import or push).
+    func testImportStillAcceptsHttpAndRejectsOtherSchemes() {
+        let todo = GpodderSyncLogic.urlsToImport(remote: ["https://x.example/rss", "ftp://y.example/rss", "http://z.example/rss"],
+                                                 localFeedURLs: [])
+        XCTAssertEqual(todo, ["https://x.example/rss", "http://z.example/rss"])
+    }
+
     // MARK: Merge on load
 
     func testMergeKeepsHttpsEntryUnionsEpisodesAndRecordsAlternates() {
