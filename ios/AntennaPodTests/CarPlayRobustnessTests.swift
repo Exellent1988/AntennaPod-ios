@@ -73,7 +73,7 @@ final class CarPlayRobustnessTests: XCTestCase {
         let b = builder()
         let all = b.allEpisodeInfos().filter { info in feeds.contains { $0.id == info.feedId } }
         XCTAssertEqual(all.count, 4, "http×2 + https×1 + slash×1: twins across feeds both kept")
-        let rows = b.episodeRows(b.allEpisodeInfos())
+        let rows = b.episodeRows(all)
         XCTAssertTrue(rows.contains { $0.title == "One (http)" })
         XCTAssertTrue(rows.contains { $0.title == "One (https)" })
         XCTAssertTrue(b.downloadRows(b.allEpisodeInfos()).isEmpty, "No DownloadService: empty, no crash")
