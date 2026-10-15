@@ -76,6 +76,27 @@ struct SubscriptionGridCell: View {
         }
     }
 
+    /// Feed artwork with the same placeholder as the grid (also used by the feed page header).
+    @ViewBuilder
+    static func feedArtwork(_ feed: PodcastFeed) -> some View {
+        if let raw = feed.imageUrl, let url = URL(string: raw) {
+            AppAsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().aspectRatio(contentMode: .fill)
+                default:
+                    Color.secondary.opacity(0.15)
+                }
+            }
+        } else {
+            ZStack {
+                Color.secondary.opacity(0.15)
+                Image(systemName: LocalFolderFeed.isLocalFolderFeed(feed) ? "folder.fill" : "mic")
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     private var placeholder: some View {
         ZStack {
             Color.secondary.opacity(0.15)
