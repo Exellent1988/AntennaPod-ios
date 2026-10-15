@@ -33,4 +33,10 @@ final class SubscriptionsGridParityTests: XCTestCase {
         XCTAssertFalse(SubscriptionsAddButton.isVisible(addLocked: true, selecting: false), "parental lock")
         XCTAssertFalse(SubscriptionsAddButton.isVisible(addLocked: false, selecting: true), "select mode")
     }
+
+    func testSelectedCardShrinksLikeAndroid() {
+        XCTAssertEqual(FeedGridSelectionModifier.cardInset(selecting: true, selected: true), 12)
+        XCTAssertEqual(FeedGridSelectionModifier.cardInset(selecting: true, selected: false), 0)
+        XCTAssertEqual(FeedGridSelectionModifier.cardInset(selecting: false, selected: true), 0)
+    }
 }
