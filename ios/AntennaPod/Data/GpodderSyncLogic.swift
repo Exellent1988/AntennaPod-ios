@@ -104,6 +104,35 @@ enum GpodderSyncLogic {
         return updates.sorted { $0.episodeId < $1.episodeId }
     }
 
+    /// True when `update` is newer than the stored local state (none stored = newer). Checked
+    /// again after the upload: a local change made meanwhile wins.
+    static func isNewer(_ update: RemoteUpdate, than current: EpisodePlaybackState?) -> Bool {
+        guard let current else { return true }
+        return current.updatedAtEpochMs < update.updatedAtEpochMs
+    }
+
+    /// `state` with a remote update merged in. Played: set played, keep position.
+    static func merged(_ update: RemoteUpdate, onto state: EpisodePlaybackState) -> EpisodePlaybackState {
+        var state = state
+        state.isPlayed = state.isPlayed || update.isPlayed
+        if !update.isPlayed { state.positionSeconds = update.positionSeconds }
+        if update.durationSeconds > 0 { state.durationSeconds = update.durationSeconds }
+        state.updatedAtEpochMs = update.updatedAtEpochMs
+        if update.isPlayed || update.positionSeconds > 1 {
+            state.lastPlayedAtEpochMs = max(state.lastPlayedAtEpochMs ?? 0, update.updatedAtEpochMs)
+        }
+        return state
+    }
+
+    /// `merged` when `isNewer`, else nil. `empty` is the base for an episode without a state.
+    static func applying(
+        _ update: RemoteUpdate,
+        to current: EpisodePlaybackState?,
+        empty: EpisodePlaybackState
+    ) -> EpisodePlaybackState? {
+        isNewer(update, than: current) ? merged(update, onto: current ?? empty) : nil
+    }
+
     /// Local playback changes since `sinceMs` as gpodder `play` actions.
     /// Skips episodes without an http(s) media URL or without a known duration
     /// (gpodder requires started/position/total for `play`).

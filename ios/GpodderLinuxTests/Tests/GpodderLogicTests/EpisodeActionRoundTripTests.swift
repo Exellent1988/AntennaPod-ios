@@ -32,19 +32,18 @@ final class Device {
         let queued = queue.snapshot
         let outgoing = GpodderSyncLogic.outgoingActions(queued: queued, snapshot: snapshot,
                                                         remotelyUpdatedIds: Set(updates.map(\.episodeId)))
-        for u in updates {
-            var s = states[u.episodeId] ?? EpisodePlaybackState(positionSeconds: 0, durationSeconds: 0, isPlayed: false, updatedAtEpochMs: 0)
-            s.isPlayed = s.isPlayed || u.isPlayed
-            if !u.isPlayed { s.positionSeconds = u.positionSeconds }
-            if u.durationSeconds > 0 { s.durationSeconds = u.durationSeconds }
-            s.updatedAtEpochMs = u.updatedAtEpochMs
-            states[u.episodeId] = s
-        }
+        // GpodderSyncService order: upload first, then apply (skipping locally newer states).
         var timestamp = ts
         if !outgoing.isEmpty { timestamp = max(timestamp, server.upload(outgoing)); queue.remove(queued) }
+        var applied = 0
+        for u in updates where GpodderSyncLogic.isNewer(u, than: states[u.episodeId]) {
+            states[u.episodeId] = GpodderSyncLogic.merged(u, onto: states[u.episodeId]
+                ?? EpisodePlaybackState(positionSeconds: 0, durationSeconds: 0, isPlayed: false, updatedAtEpochMs: 0))
+            applied += 1
+        }
         actionsTimestamp = timestamp
         uploadCursorMs = nowMs
-        return (updates.count, outgoing.count)
+        return (applied, outgoing.count)
     }
     /// Reset app data: cursors and outbox cleared, playback states gone (GpodderSyncService.resetCursors).
     func resetAppData() { states = [:]; actionsTimestamp = 0; uploadCursorMs = 0; queue.clear() }

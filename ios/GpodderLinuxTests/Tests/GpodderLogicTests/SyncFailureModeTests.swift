@@ -37,13 +37,13 @@ final class FlakyServer {
         let later = subs.filter { $0.ts > since }
         return SubscriptionDelta(add: later.flatMap(\.add), remove: later.flatMap(\.remove), timestamp: clock)
     }
-    func pushSubs(add: [String]) throws -> PushResult {
+    func pushSubs(add: [String], remove: [String] = []) throws -> PushResult {
         if failNextUpload {
             failNextUpload = false
-            if uploadStoredBeforeFailure { clock += 1; subs.append((clock, add, [])) }
+            if uploadStoredBeforeFailure { clock += 1; subs.append((clock, add, remove)) }
             throw InjectedFailure()
         }
-        clock += 1; subs.append((clock, add, [])); return PushResult(timestamp: clock, updateUrls: nil)
+        clock += 1; subs.append((clock, add, remove)); return PushResult(timestamp: clock, updateUrls: nil)
     }
 }
 
@@ -54,6 +54,14 @@ final class FlakyServer {
 final class SyncDevice {
     var library: [[String]] = []
     var subCursor = SubscriptionSyncCursor()
+    var removals = PendingSubscriptionRemovals()
+    /// User unsubscribe (PodcastStore.unsubscribe with recording on).
+    func unsubscribeLocally(_ url: String) {
+        guard let i = library.firstIndex(where: { $0.contains { FeedURLEquality.key($0) == FeedURLEquality.key(url) } }) else { return }
+        removals.record(library.remove(at: i))
+    }
+    /// User subscribe (PodcastStore.subscribeQuietly new feed): cancels a pending remove.
+    func subscribeLocally(_ url: String) { library.append([url]); removals.cancel([url]) }
     var refs: [GpodderSyncLogic.EpisodeRef]
     var states: [String: EpisodePlaybackState] = [:]
     var actionsTimestamp: Int64 = 0, uploadCursorMs: Int64 = 0
@@ -62,15 +70,22 @@ final class SyncDevice {
 
     func syncSubscriptions(_ s: FlakyServer) throws {
         let delta = try s.pullSubs(since: subCursor.since)
+        let wanted = removals.absorbingPull(delta.add)
+        let pending = removals
         var remote = subCursor.applyingPull(delta)
-        for u in SubscriptionSyncPlan.urlsToImport(remote: delta.add, localFeedURLs: library.flatMap { $0 }) { library.append([u]) }
+        for u in SubscriptionSyncPlan.urlsToImport(remote: wanted, localFeedURLs: library.flatMap { $0 }) { library.append([u]) }
         if subCursor.since > 0 {
             let drop = Set(SubscriptionSyncPlan.podcastsToUnsubscribe(remove: delta.remove, add: delta.add, localPodcasts: library))
             library = library.enumerated().filter { !drop.contains($0.offset) }.map(\.element)
         }
         let up = SubscriptionSyncPlan.urlsToUpload(localPodcasts: library, remoteKeys: remote)
+        let rm = pending.urlsToRemove(remoteKeys: remote)
         var push: PushResult?
-        if !up.isEmpty { let r = try s.pushSubs(add: up); remote = SubscriptionSyncCursor.applyingPush(remote, uploaded: up, result: r); push = r }
+        if !up.isEmpty || !rm.isEmpty {
+            let r = try s.pushSubs(add: up, remove: rm)
+            remote = pending.forgetting(SubscriptionSyncCursor.applyingPush(remote, uploaded: up, result: r)); push = r
+            removals.confirm(pending)
+        }
         subCursor = .committed(pull: delta, keys: remote, push: push)
     }
 
@@ -81,16 +96,11 @@ final class SyncDevice {
         let snapshot = GpodderSyncLogic.localActions(refs: refs, localStates: states, sinceMs: uploadCursorMs, deviceId: "D")
         let queued = queue.snapshot
         let outgoing = GpodderSyncLogic.outgoingActions(queued: queued, snapshot: snapshot, remotelyUpdatedIds: Set(updates.map(\.episodeId)))
-        for u in updates {
-            var st = states[u.episodeId] ?? .init(positionSeconds: 0, durationSeconds: 0, isPlayed: false, updatedAtEpochMs: 0)
-            st.isPlayed = st.isPlayed || u.isPlayed
-            if !u.isPlayed { st.positionSeconds = u.positionSeconds }
-            if u.durationSeconds > 0 { st.durationSeconds = u.durationSeconds }
-            st.updatedAtEpochMs = u.updatedAtEpochMs
-            states[u.episodeId] = st
-        }
         var timestamp = ts
         if !outgoing.isEmpty { timestamp = max(timestamp, try s.uploadActions(outgoing)); queue.remove(queued) }
+        for u in updates {
+            if GpodderSyncLogic.isNewer(u, than: states[u.episodeId]) { states[u.episodeId] = GpodderSyncLogic.merged(u, onto: states[u.episodeId] ?? .zero) }
+        }
         actionsTimestamp = timestamp
         uploadCursorMs = nowMs
         return outgoing.count
@@ -156,7 +166,7 @@ final class SyncFailureModeTests: XCTestCase {
         XCTAssertEqual(try other.syncActions(s, nowMs: t0 + 4000), 0)
     }
 
-    func testUploadFailureAfterApplyingRemoteEchoesRemoteStateOnceOnRetry() throws {
+    func testUploadFailureAppliesNothingAndRetryDoesNotEchoRemoteState() throws {
         let s = FlakyServer(), a = device("a"), b = device("b")
         a.queue.enqueue(play(0, 900, sec: 10))
         try a.syncActions(s, nowMs: t0 + 20_000)
@@ -164,16 +174,11 @@ final class SyncFailureModeTests: XCTestCase {
         b.uploadCursorMs = t0 - 1 // B synced before; A's action (t0+10s) is newer than B's cursor
         s.failNextUpload = true
         XCTAssertThrowsError(try b.syncActions(s, nowMs: t0 + 30_000))
-        XCTAssertEqual(b.states["g1"]?.positionSeconds, 900, "remote applied before the failed upload")
+        XCTAssertNil(b.states["g1"], "remote not applied when the upload failed")
         try b.syncActions(s, nowMs: t0 + 40_000)
         let g1Copies = s.actions.filter { $0.a.guid == "g1" }.count
-        // KNOWN, NOT FIXED (app-only, GpodderSyncService.syncEpisodeActions): remote updates are
-        // applied before the upload; when the upload fails the upload cursor stays, so the retry
-        // snapshot re-sends A's position as B's action once. Harmless (same position and
-        // timestamp; no device applies it again, checked below) but a duplicate on the server.
-        XCTAssertEqual(g1Copies, 2)
-        try a.syncActions(s, nowMs: t0 + 50_000)
-        XCTAssertEqual(a.states["g1"]?.positionSeconds, 900, "echo carries the same position; nothing changes for A")
+        XCTAssertEqual(g1Copies, 1, "B must not re-upload A's position as its own after the retry")
+        XCTAssertEqual(b.states["g1"]?.positionSeconds, 900)
     }
 
     // MARK: 1+2 subscriptions
@@ -233,6 +238,74 @@ final class SyncFailureModeTests: XCTestCase {
         XCTAssertEqual(d.queue.snapshot.count, 1); XCTAssertEqual(d.actionsTimestamp, 0)
     }
 
+    func testLocalStateNewerThanRemoteDuringUploadIsKept() {
+        let u = GpodderSyncLogic.RemoteUpdate(episodeId: "g1", positionSeconds: 100, durationSeconds: 3600, isPlayed: false, updatedAtEpochMs: t0)
+        let newer = EpisodePlaybackState(positionSeconds: 500, durationSeconds: 3600, isPlayed: false, updatedAtEpochMs: t0 + 1)
+        XCTAssertNil(GpodderSyncLogic.applying(u, to: newer, empty: .zero))
+        let older = EpisodePlaybackState(positionSeconds: 50, durationSeconds: 0, isPlayed: false, updatedAtEpochMs: t0 - 1)
+        let r = GpodderSyncLogic.applying(u, to: older, empty: .zero)
+        XCTAssertEqual(r?.positionSeconds, 100); XCTAssertEqual(r?.durationSeconds, 3600); XCTAssertEqual(r?.updatedAtEpochMs, t0)
+        XCTAssertEqual(r?.lastPlayedAtEpochMs, t0)
+        let played = GpodderSyncLogic.RemoteUpdate(episodeId: "g1", positionSeconds: 0, durationSeconds: 3600, isPlayed: true, updatedAtEpochMs: t0)
+        XCTAssertEqual(GpodderSyncLogic.applying(played, to: older, empty: .zero)?.isPlayed, true)
+        XCTAssertEqual(GpodderSyncLogic.applying(played, to: older, empty: .zero)?.positionSeconds, 50, "played keeps local position (as before)")
+        XCTAssertEqual(GpodderSyncLogic.applying(u, to: nil, empty: .zero)?.positionSeconds, 100)
+    }
+
+    // MARK: local unsubscribe → remove
+
+    func testLocalUnsubscribeIsUploadedAsRemoveAndNotReAdded() throws {
+        let s = FlakyServer(), d = device()
+        s.subs = [(150, ["https://a.example/f", "https://b.example/f"], [])]; s.clock = 150
+        try d.syncSubscriptions(s)
+        d.unsubscribeLocally("http://a.example/f/")
+        try d.syncSubscriptions(s)
+        XCTAssertEqual(s.subscriptionURLs, ["https://b.example/f"])
+        XCTAssertTrue(d.removals.isEmpty)
+        try d.syncSubscriptions(s)
+        d.subCursor = .reset; try d.syncSubscriptions(s) // even a full re-pull
+        XCTAssertEqual(d.library, [["https://b.example/f"]])
+    }
+
+    func testRemoveSurvivesFailedPushAndPullEchoIsIgnored() throws {
+        let s = FlakyServer(), d = device()
+        s.subs = [(150, ["https://a.example/f"], [])]; s.clock = 150
+        try d.syncSubscriptions(s)
+        d.unsubscribeLocally("https://a.example/f")
+        // Another device re-sent the add in the same window: pull lists it again.
+        s.clock = 160; s.subs.append((160, ["http://a.example/f/"], []))
+        s.failNextUpload = true
+        XCTAssertThrowsError(try d.syncSubscriptions(s))
+        XCTAssertEqual(d.library, [], "pending remove blocks the re-add")
+        XCTAssertFalse(d.removals.isEmpty, "kept until confirmed")
+        try d.syncSubscriptions(s)
+        XCTAssertEqual(d.library, []); XCTAssertTrue(d.removals.isEmpty)
+        XCTAssertEqual(s.subscriptionURLs, [])
+    }
+
+    func testResubscribeBeforeUploadCancelsRemove() throws {
+        let s = FlakyServer(), d = device()
+        s.subs = [(150, ["https://a.example/f"], [])]; s.clock = 150
+        try d.syncSubscriptions(s)
+        d.unsubscribeLocally("https://a.example/f")
+        d.subscribeLocally("http://A.example/f")
+        XCTAssertTrue(d.removals.isEmpty)
+        try d.syncSubscriptions(s)
+        XCTAssertEqual(s.subs.count, 1, "nothing to push: server already has it")
+        XCTAssertEqual(d.library.count, 1)
+    }
+
+    func testRemoveSendsServerKnownAlias() throws {
+        let s = FlakyServer(), d = device()
+        s.subs = [(150, ["http://old.example/feed"], [])]; s.clock = 150
+        d.library = [["https://new.example/rss", "http://old.example/feed"]]
+        try d.syncSubscriptions(s)
+        d.unsubscribeLocally("https://new.example/rss")
+        try d.syncSubscriptions(s)
+        XCTAssertEqual(s.subs.last?.remove, ["http://old.example/feed"])
+        XCTAssertEqual(s.subscriptionURLs, [])
+    }
+
     // MARK: 4 variants on re-pull
 
     func testVariantsOnServerCountOnceOnRepull() throws {
@@ -251,4 +324,8 @@ final class SyncFailureModeTests: XCTestCase {
 
 extension GpodderEpisodeAction {
     func with(episode: String, guid: String) -> GpodderEpisodeAction { var c = self; c.episode = episode; c.guid = guid; return c }
+}
+
+extension EpisodePlaybackState {
+    static let zero = EpisodePlaybackState(positionSeconds: 0, durationSeconds: 0, isPlayed: false, updatedAtEpochMs: 0)
 }

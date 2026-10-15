@@ -238,6 +238,7 @@ final class PodcastStore: ObservableObject {
         feedSettingsById = [:]
         feeds = []
         gpodderActionQueue.clear()
+        gpodderSubscriptionOutbox.clear()
         URLCache.shared.removeAllCachedResponses()
         CoverDiskCache.shared.clear()
         lastError = nil
@@ -305,10 +306,15 @@ final class PodcastStore: ObservableObject {
     /// Does **not** delete downloaded episode files by itself — UI may call
     /// `DownloadService.deleteDownloads(forFeed:)` **before** this when the user chooses
     /// Unsubscribe and delete downloads (feed-scoped offline files only).
-    func unsubscribe(_ staleFeed: PodcastFeed) {
+    /// `recordForSync`: queue the remove for gpodder (user unsubscribe). gpodder sync applying
+    /// a server-side remove passes false.
+    func unsubscribe(_ staleFeed: PodcastFeed, recordForSync: Bool = true) {
         // The caller's copy can predate a refresh (Unsubscribe dialog left open while Refresh
         // all merged new episodes); clean up with the live episode list.
         let feed = feeds.first(where: { $0.id == staleFeed.id }) ?? staleFeed
+        if recordForSync, isGpodderActionRecordingEnabled(), !LocalFolderFeed.isLocalFolderFeed(feed) {
+            gpodderSubscriptionOutbox.record(feed.allUrls)
+        }
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             LocalFolderBookmarkStore.release(feedId: feed.id)
         }
@@ -1184,6 +1190,8 @@ final class PodcastStore: ObservableObject {
 
     /// Persistent gpodder outbox (Android `SynchronizationQueueStorage`).
     var gpodderActionQueue: GpodderActionQueue = .shared
+    /// Persistent gpodder local-unsubscribe queue (Android removed feeds).
+    var gpodderSubscriptionOutbox: GpodderSubscriptionOutbox = .shared
     /// Android `SynchronizationSettings.isProviderConnected()`: record only while logged in.
     var isGpodderActionRecordingEnabled: () -> Bool = {
         UserDefaults.standard.bool(forKey: "gpodder.isLoggedIn")
@@ -3641,6 +3649,8 @@ final class PodcastStore: ObservableObject {
             return []
         } else {
             feeds.append(feed)
+            // Re-subscribe before the remove was uploaded cancels it (Android enqueueFeedAdded).
+            gpodderSubscriptionOutbox.cancel(feed.allUrls)
         }
         if persistCredentials, let credentials, credentials.isUsable {
             try? FeedHttpBasicAuthKeychain.save(

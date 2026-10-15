@@ -135,6 +135,7 @@ final class GpodderSyncService: ObservableObject {
         episodeActionsTimestamp = 0
         episodeUploadCursorMs = 0
         GpodderActionQueue.shared.clear()
+        GpodderSubscriptionOutbox.shared.clear()
     }
 
     private var knownRemoteURLs: Set<String> {
@@ -442,7 +443,12 @@ final class GpodderSyncService: ObservableObject {
 
             // Pull: subscribe missing (deduped, per-feed progress + errors).
             let localNormalized = Set(store.feeds.map { Self.normalizeFeedURL($0.feedUrl) }.filter { !$0.isEmpty })
-            let pulled = await subscribeMissing(changes.add, store: store)
+            // Local unsubscribes not yet confirmed: their podcasts are not re-added by the pull
+            // (server echo / same since-window), and the server's spellings are remembered.
+            let outbox = store.gpodderSubscriptionOutbox
+            let wantedAdds = outbox.absorbingPull(changes.add)
+            let pendingRemovals = outbox.snapshot
+            let pulled = await subscribeMissing(wantedAdds, store: store)
             let subscribed = pulled.subscribed
             let subscribeFailures = pulled.failures.map { "\($0.url): \($0.message)" }
 
@@ -457,7 +463,7 @@ final class GpodderSyncService: ObservableObject {
                 let indexes = SubscriptionSyncPlan.podcastsToUnsubscribe(
                     remove: changes.remove, add: changes.add, localPodcasts: feeds.map(\.allUrls))
                 for feed in indexes.map({ feeds[$0] }) {
-                    store.unsubscribe(feed)
+                    store.unsubscribe(feed, recordForSync: false)
                     removedLocally += 1
                 }
             }
@@ -467,11 +473,15 @@ final class GpodderSyncService: ObservableObject {
             // Known on the server under another address (pre-redirect URL, http/https variant):
             // not uploaded again (that is what filled the account with duplicates).
             let toUpload = SubscriptionSyncPlan.urlsToUpload(localPodcasts: store.feeds.map(\.allUrls), remoteKeys: remote)
+            let toRemove = pendingRemovals.urlsToRemove(remoteKeys: remote)
             var pushResult: PushResult?
-            if !toUpload.isEmpty {
-                let upload = try await client.uploadSubscriptionChanges(add: toUpload, remove: [])
-                remote = SubscriptionSyncCursor.applyingPush(remote, uploaded: toUpload, result: upload)
+            if !toUpload.isEmpty || !toRemove.isEmpty {
+                let upload = try await client.uploadSubscriptionChanges(add: toUpload, remove: toRemove)
+                remote = pendingRemovals.forgetting(
+                    SubscriptionSyncCursor.applyingPush(remote, uploaded: toUpload, result: upload))
                 pushResult = upload
+                // Cleared only after the server accepted it; a failed push retries next round.
+                outbox.confirm(pendingRemovals)
             }
             // Committed only after pull + push succeeded; a failed round repeats the same delta.
             let committed = SubscriptionSyncCursor.committed(pull: changes, keys: remote, push: pushResult)
@@ -540,21 +550,9 @@ final class GpodderSyncService: ObservableObject {
             queued: queued, snapshot: snapshot, remotelyUpdatedIds: updatedIds
         )
 
-        for update in updates {
-            if update.isPlayed, !store.isPlayed(update.episodeId) {
-                store.markPlayed(update.episodeId)
-            }
-            var state = store.playbackState(for: update.episodeId)
-            state.isPlayed = state.isPlayed || update.isPlayed
-            if !update.isPlayed { state.positionSeconds = update.positionSeconds }
-            if update.durationSeconds > 0 { state.durationSeconds = update.durationSeconds }
-            state.updatedAtEpochMs = update.updatedAtEpochMs
-            if update.isPlayed || update.positionSeconds > 1 {
-                state.lastPlayedAtEpochMs = max(state.lastPlayedAtEpochMs ?? 0, update.updatedAtEpochMs)
-            }
-            store.playbackStates[update.episodeId] = state
-        }
-
+        // Upload first: when it fails nothing remote is applied, so a retry cannot re-send the
+        // applied remote state as this device's own action. Updates whose local state became
+        // newer during the upload are skipped.
         var timestamp = remote.timestamp
         if !outgoing.isEmpty {
             if let ts = try await client.uploadEpisodeActions(outgoing) {
@@ -562,9 +560,19 @@ final class GpodderSyncService: ObservableObject {
             }
             store.gpodderActionQueue.remove(queued)
         }
+        var applied = 0
+        for update in updates {
+            guard GpodderSyncLogic.isNewer(update, than: store.playbackStates[update.episodeId]) else { continue }
+            if update.isPlayed, !store.isPlayed(update.episodeId) {
+                store.markPlayed(update.episodeId)
+            }
+            store.playbackStates[update.episodeId] = GpodderSyncLogic.merged(
+                update, onto: store.playbackState(for: update.episodeId))
+            applied += 1
+        }
         episodeActionsTimestamp = timestamp
         episodeUploadCursorMs = started
-        return (updates.count, outgoing.count)
+        return (applied, outgoing.count)
     }
 
     /// Persist failure + optional local notification (Settings toggle + permission).
