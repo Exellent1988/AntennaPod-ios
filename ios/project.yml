@@ -119,6 +119,8 @@ targets:
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios.tests
       GENERATE_INFOPLIST_FILE: YES
+      # Fails any test that leaves persisted settings changed (AntennaPodTests/SettingsLeakObserver.swift).
+      INFOPLIST_KEY_NSPrincipalClass: AntennaPodTests.SettingsLeakObserver
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AntennaPod.app/AntennaPod"
       BUNDLE_LOADER: "$(TEST_HOST)"
     dependencies:
