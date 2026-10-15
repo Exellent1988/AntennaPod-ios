@@ -12,7 +12,9 @@ enum GpodderSyncLogic {
         for raw in remote {
             let fetchURL = GpodderSyncService.syncFeedURL(raw)
             let key = GpodderSyncService.normalizeFeedURL(fetchURL)
-            guard key.hasPrefix("http://") || key.hasPrefix("https://") else { continue }
+            // The key has no scheme (http ≡ https); check the real URL.
+            let scheme = fetchURL.lowercased()
+            guard !key.isEmpty, scheme.hasPrefix("http://") || scheme.hasPrefix("https://") else { continue }
             guard seen.insert(key).inserted else { continue }
             result.append(fetchURL)
         }

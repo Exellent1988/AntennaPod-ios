@@ -358,7 +358,7 @@ final class GpodderSyncService: ObservableObject {
         store: PodcastStore
     ) async -> (subscribed: Int, skipped: Int, failures: [GpodderImportFailure]) {
         let todo = GpodderSyncLogic.urlsToImport(remote: remote, localFeedURLs: store.feeds.flatMap(\.allUrls))
-        let distinctRemote = Set(remote.map(Self.normalizeFeedURL).filter { $0.hasPrefix("http") }).count
+        let distinctRemote = Set(remote.filter { Self.syncFeedURL($0).lowercased().hasPrefix("http") }.map(Self.normalizeFeedURL)).count
         var failures: [GpodderImportFailure] = []
         var subscribed = 0
         importFailures = []
@@ -471,7 +471,7 @@ final class GpodderSyncService: ObservableObject {
             for feed in store.feeds {
                 let fetchURL = Self.syncFeedURL(feed.feedUrl)
                 let key = Self.normalizeFeedURL(fetchURL)
-                guard !key.isEmpty, key.hasPrefix("http") else { continue }
+                guard !key.isEmpty, fetchURL.lowercased().hasPrefix("http") else { continue }
                 guard !remote.contains(key) else { continue }
                 // Known on the server under another address (pre-redirect URL, http/https
                 // variant): uploading this one too is what filled the account with duplicates.
