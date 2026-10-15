@@ -2861,7 +2861,7 @@ final class AppSettings: ObservableObject {
         subscriptionsGridShowTitles = gridShowTitles
         if storedGridTitles == nil {
             // Pin the first-launch choice: the fresh-install check is false from the second launch on.
-            // Use the local value — reading the property here is still before all stored props init.
+            // Local value: reading the property here is a `self` access before init finishes.
             ud.set(gridShowTitles, forKey: Keys.subscriptionsGridShowTitles)
         }
         subscriptionsCounterMode = Self.migrateCounterModeDefaultOnce(ud)
