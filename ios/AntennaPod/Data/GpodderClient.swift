@@ -257,18 +257,73 @@ struct GpodderClient {
         }
     }
 
+    /// Max same-host redirects followed manually before giving up.
+    static let maxRedirects = 5
+
     private func performOnce(_ request: URLRequest, expectBody: Bool) async throws -> Data {
-        let data: Data
-        let response: URLResponse
-        do {
-            (data, response) = try await session.data(for: request)
-        } catch let error as URLError {
-            throw GpodderError.network(error)
+        var current = request
+        var hops = 0
+        while true {
+            let data: Data
+            let response: URLResponse
+            do {
+                // Redirects are never followed automatically: URLSession would replay the Basic
+                // Authorization header to whatever host/scheme the Location points to.
+                (data, response) = try await session.data(for: current, delegate: GpodderNoRedirectDelegate.shared)
+            } catch let error as URLError {
+                throw GpodderError.network(error)
+            }
+            guard let http = response as? HTTPURLResponse else {
+                throw GpodderError.invalidResponse
+            }
+            if (300...399).contains(http.statusCode), http.statusCode != 304 {
+                current = try Self.redirectedRequest(from: current, response: http, hops: hops)
+                hops += 1
+                continue
+            }
+            return try validate(http, data: data, request: request, expectBody: expectBody)
         }
-        guard let http = response as? HTTPURLResponse else {
+    }
+
+    /// Decides whether a 3xx may be followed. Allowed: same host, same port, and https stays https
+    /// (http → https on the same host is an upgrade and allowed). Anything else fails clearly
+    /// instead of leaking credentials or silently syncing against another server.
+    static func redirectedRequest(from request: URLRequest, response: HTTPURLResponse, hops: Int) throws -> URLRequest {
+        guard let from = request.url,
+              let location = response.value(forHTTPHeaderField: "Location"),
+              let target = URL(string: location, relativeTo: from)?.absoluteURL,
+              let toScheme = target.scheme?.lowercased() else {
             throw GpodderError.invalidResponse
         }
-        // URLSession follows redirects; landing on a login page means auth/SSO intercepted the API.
+        if target.path.lowercased().contains("/login"), !from.path.lowercased().contains("/login") {
+            throw GpodderError.redirectedToLogin
+        }
+        let fromScheme = from.scheme?.lowercased() ?? ""
+        if fromScheme == "https", toScheme != "https" {
+            throw GpodderError.insecureRedirect
+        }
+        guard toScheme == "https" || toScheme == "http" else { throw GpodderError.insecureRedirect }
+        func port(_ u: URL, _ scheme: String) -> Int { u.port ?? (scheme == "https" ? 443 : 80) }
+        let sameHost = from.host?.lowercased() == target.host?.lowercased()
+        let samePort = port(from, fromScheme) == port(target, toScheme)
+            || (fromScheme == "http" && toScheme == "https" && from.port == nil && target.port == nil)
+        guard sameHost, samePort else {
+            throw GpodderError.redirectedToOtherHost(target.host ?? "?")
+        }
+        guard hops < maxRedirects else { throw GpodderError.tooManyRedirects }
+        var next = request
+        next.url = target
+        // 303 (and 301/302 for POST, as browsers do) turn into GET without body.
+        if response.statusCode == 303 || ((response.statusCode == 301 || response.statusCode == 302) && request.httpMethod == "POST") {
+            next.httpMethod = "GET"
+            next.httpBody = nil
+            next.setValue(nil, forHTTPHeaderField: "Content-Type")
+        }
+        return next
+    }
+
+    private func validate(_ http: HTTPURLResponse, data: Data, request: URLRequest, expectBody: Bool) throws -> Data {
+        // Landing on a login page means auth/SSO intercepted the API.
         if let finalPath = http.url?.path.lowercased(), finalPath.contains("/login"),
            request.url?.path.lowercased().contains("/login") != true {
             throw GpodderError.redirectedToLogin
@@ -288,8 +343,8 @@ struct GpodderClient {
         case 500...599:
             throw GpodderError.serverError(http.statusCode)
         default:
-            let snippet = String(data: data, encoding: .utf8)?.prefix(200) ?? ""
-            throw GpodderError.httpStatus(http.statusCode, String(snippet))
+            // Status code only: server bodies may echo request data and must not reach the UI/logs.
+            throw GpodderError.httpStatus(http.statusCode, "")
         }
     }
 
@@ -481,6 +536,9 @@ enum GpodderError: LocalizedError {
     case nextcloudAppMissing
     case redirectedToLogin
     case serverError(Int)
+    case insecureRedirect
+    case redirectedToOtherHost(String)
+    case tooManyRedirects
 
     /// Worth retrying with backoff: 5xx and timeouts / dropped connections. Never auth errors.
     var isTransient: Bool {
@@ -498,7 +556,7 @@ enum GpodderError: LocalizedError {
         case .missingCredentials:
             return String(localized: "Username and device id are required")
         case .unauthorized:
-            return String(localized: "Login failed (unauthorized)")
+            return String(localized: "gpodder.net rejected the login (HTTP 401) — check the username and password.")
         case .notFound:
             return String(localized: "Sync resource not found (404) — check host / Nextcloud Gpodder Sync path")
         case .invalidResponse:
@@ -512,17 +570,21 @@ enum GpodderError: LocalizedError {
             return String(localized: "Not logged in to sync provider")
         case .network(let error):
             switch error.code {
-            case .notConnectedToInternet, .networkConnectionLost:
-                return String(localized: "No internet connection")
+            case .notConnectedToInternet, .dataNotAllowed, .internationalRoamingOff:
+                return String(localized: "No internet connection — sync will be retried next time.")
+            case .networkConnectionLost:
+                return String(localized: "Connection to the sync server was lost — try again.")
+            case .timedOut:
+                return String(localized: "Sync server did not respond in time (timeout) — tried 3 times, try again later.")
             case .cannotFindHost, .dnsLookupFailed:
                 return String(localized: "Sync server not found — check the host URL")
-            case .cannotConnectToHost, .timedOut:
-                return String(localized: "Sync server not reachable (connection refused or timed out)")
+            case .cannotConnectToHost:
+                return String(localized: "Sync server is offline or refuses the connection — check the host URL or try again later.")
             case .serverCertificateUntrusted, .serverCertificateHasBadDate, .serverCertificateNotYetValid,
                  .serverCertificateHasUnknownRoot, .secureConnectionFailed:
                 return String(localized: "TLS/certificate error on sync server")
             default:
-                return error.localizedDescription
+                return String(localized: "Network error while syncing (code \(error.code.rawValue))")
             }
         case .nextcloudAuth:
             return String(localized: "Nextcloud rejected the login — check the username and password. With two-factor authentication you need an app password (Nextcloud → Settings → Security).")
@@ -532,8 +594,29 @@ enum GpodderError: LocalizedError {
             return String(localized: "The server redirected to a login page — check the URL and use an app password; SSO login pages are not supported.")
         case .serverError(let code):
             return String(localized: "Sync server error (HTTP \(code)) — tried 3 times, try again later.")
+        case .insecureRedirect:
+            return String(localized: "The sync server redirected to an insecure (http) address — stopped to protect your password. Check the server URL.")
+        case .redirectedToOtherHost(let host):
+            return String(localized: "The sync server redirected to another server (\(host)) — stopped to protect your password. Enter that address directly if it is correct.")
+        case .tooManyRedirects:
+            return String(localized: "Too many redirects from the sync server — check the server URL.")
         case .htmlInsteadOfJSON:
             return String(localized: "Server answered with a web page instead of sync data — check the URL (Nextcloud: is the Gpodder Sync app installed?) and use an app password")
         }
+    }
+}
+
+/// Task delegate that refuses automatic HTTP redirects so `GpodderClient` can vet each hop.
+final class GpodderNoRedirectDelegate: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+    static let shared = GpodderNoRedirectDelegate()
+
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        willPerformHTTPRedirection response: HTTPURLResponse,
+        newRequest request: URLRequest,
+        completionHandler: @escaping (URLRequest?) -> Void
+    ) {
+        completionHandler(nil)
     }
 }
