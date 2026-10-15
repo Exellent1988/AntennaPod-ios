@@ -55,6 +55,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         var signals: [AnyPublisher<Void, Never>] = []
         if let store = AppServices.store {
             signals.append(store.$feeds.map { _ in () }.eraseToAnyPublisher())
+            signals.append(store.$feedSettingsById.map { _ in () }.eraseToAnyPublisher())
             signals.append(store.$queue.map { _ in () }.eraseToAnyPublisher())
             signals.append(store.$playbackStates.map { _ in () }.eraseToAnyPublisher())
             signals.append(store.$favoriteAtById.map { _ in () }.eraseToAnyPublisher())
@@ -165,7 +166,11 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     @MainActor private func feedEpisodeRows(_ feedId: UUID, byId: [String: CarPlayEpisodeInfo]) -> [CarPlayRow] {
         let feed = AppServices.store?.feeds.first { $0.id == feedId }
         let infos = (feed?.episodes ?? []).map { byId[$0.id] ?? info($0, feed: feed) }
-        return CarPlayParity.sorted(infos, by: .newestFirst).prefix(limit).map { row($0, showFeed: false) }
+        let settings = AppServices.settings
+        let global = settings?.feedEpisodeSort ?? .newestFirst
+        let sort = AppServices.store?.feedSettings(for: feedId).resolvedEpisodeSort(global: global) ?? global
+        return CarPlayParity.feedEpisodes(infos, sort: sort, filter: settings?.feedEpisodeFilter ?? .all, limit: limit)
+            .map { row($0, showFeed: false) }
     }
 
     private func row(_ e: CarPlayEpisodeInfo, showFeed: Bool = true) -> CarPlayRow {
