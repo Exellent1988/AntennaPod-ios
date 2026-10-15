@@ -6,6 +6,11 @@ import XCTest
 /// Expected values follow Android SynchronizationQueueImpl.enqueueEpisodePlayed.
 @MainActor
 final class GpodderPlayActionTests: PlaybackFixtureTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+        settings.keepSkippedEpisodes = true   // Android default: skips are kept (unplayed, real position)
+    }
+
     private func action(for episode: PodcastEpisode) -> GpodderEpisodeAction? {
         let refs = episodes.map {
             GpodderSyncLogic.EpisodeRef(episodeId: $0.id, feedUrl: "https://example.com/feed",
@@ -26,6 +31,7 @@ final class GpodderPlayActionTests: PlaybackFixtureTestCase {
         try await playAndWait(episodes[0], past: 1.0)
         let at = playback.positionSeconds
         playback.skipToNextEpisode()
+        XCTAssertFalse(store.isPlayed(episodes[0].id), "Kept skip stays unplayed")
         let a = try XCTUnwrap(action(for: episodes[0]))
         XCTAssertEqual(a.action, "play")
         XCTAssertEqual(a.started, 0)
