@@ -8,6 +8,7 @@ struct QueueView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.editMode) private var editMode
 
+    @State private var multiSelection = Set<String>()
     @State private var showSwipeActionsSheet = false
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -391,7 +392,7 @@ struct QueueView: View {
 
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var queueList: some View {
-        List {
+        List(selection: $multiSelection) {
             Section {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -476,6 +477,7 @@ struct QueueView: View {
                         episode: episode,
                         feedTitle: store.displayTitle(containingEpisodeId: episode.id)
                     )
+                    .tag(episode.id)
                     .episodePagerList(filteredQueue)
                     .environment(\.episodeListContext, .queue)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -542,6 +544,10 @@ struct QueueView: View {
             }
         }
         .tabRootList(.queue)
+        // Android QueueFragment: long-press Select / floatingSelectMenu (episodes_apply_action_speeddial).
+        // Select replaces the old Edit button: the same edit mode shows the checkmarks and, when the queue
+        // is unlocked and unfiltered, the drag handles.
+        .episodeMultiSelect(selection: $multiSelection, episodes: filteredQueue, queueActions: true)
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
@@ -569,11 +575,6 @@ struct QueueView: View {
                     : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Does not block Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, or adding episodes to the queue.")
             )
             .accessibilityAddTraits(.isButton)
-        }
-        ToolbarItem(placement: .topBarTrailing) {
-            EditButton()
-                // Hide reorder while filtering or locked — filtered IndexSet ≠ full queue; lock = no manual reorder.
-                .disabled(store.queue.isEmpty || !canReorder)
         }
         ToolbarItem(placement: .primaryAction) {
             Menu {
