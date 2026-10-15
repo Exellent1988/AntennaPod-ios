@@ -113,6 +113,12 @@ struct FeedRepository {
             let parsed = try FeedParsing.parse(xml: xml)
             var feed = FeedParsing.resolvingRelativeLinks(in: parsed, against: response.url ?? url)
             feed.feedUrl = resolved
+            feed.episodes = PodcastFeed.uniqueEpisodes(feed.episodes)
+            // Redirected: remember the final address so the same podcast reached through
+            // another URL (gpodder list, OPML) is recognised instead of added twice.
+            if let final = response.url?.absoluteString, FeedURLKey.key(final) != FeedURLKey.key(resolved) {
+                feed.addAlternateUrl(final)
+            }
             return feed
         } catch FeedParsingError.emptyResponse {
             throw FetchError.emptyResponse

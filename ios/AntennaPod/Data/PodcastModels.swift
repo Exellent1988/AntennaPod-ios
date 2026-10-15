@@ -2354,6 +2354,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Updated only on successful `subscribeQuietly` / fetch+parse; failed refresh leaves the previous value.
     /// Local JSON / backup only — not OPML. Removed with the feed on unsubscribe.
     var lastRefreshedAtEpochMs: Int64?
+    /// Other URLs that resolved to this podcast (gpodder / OPML URL before a redirect, the
+    /// final URL after redirects). Dedupe and gpodder sync treat them as this feed (Android
+    /// SyncService checks the permanent-redirect and final URL before adding a subscription).
+    var alternateUrls: [String]? = nil
+    /// Last fetch / parse error for a subscription that never loaded (gpodder import keeps the
+    /// podcast with an error state instead of dropping it, like Android's "Unknown podcast").
+    var loadError: String? = nil
 
     /// Non-empty feed description (may still contain HTML).
     var hasDescriptionText: Bool {
@@ -2704,10 +2711,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         publisherItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .publisherItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
         lastRefreshedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .lastRefreshedAtEpochMs)
+        alternateUrls = try c.decodeIfPresent([String].self, forKey: .alternateUrls)
+        loadError = try c.decodeIfPresent(String.self, forKey: .loadError)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes, lastRefreshedAtEpochMs
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes, lastRefreshedAtEpochMs, alternateUrls, loadError
     }
 }
 

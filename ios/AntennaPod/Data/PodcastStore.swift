@@ -120,8 +120,74 @@ final class PodcastStore: ObservableObject {
         bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
         episodePrivateNotesById = PodcastPersistence.loadEpisodePrivateNotes()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
+        mergeDuplicateFeeds()
         LocalFolderBookmarkStore.reloadFromPersistence()
         rescanLocalFolderFeedsBestEffort()
+        publishWidgetSnapshot()
+    }
+
+    /// Libraries from earlier betas hold the same podcast several times (gpodder list with
+    /// http/https, trailing-slash or redirect variants) and feeds with repeated episode ids.
+    /// Merge them on load: keep the https entry, union episodes, move settings / tags.
+    func mergeDuplicateFeeds() {
+        let result = FeedLibraryDedupe.merge(feeds)
+        let changed = !result.merged.isEmpty
+            || zip(result.feeds, feeds).contains { $0.episodes.count != $1.episodes.count }
+        guard changed else { return }
+        for (dropped, survivor) in result.merged {
+            if feedSettingsById[survivor] == nil, let s = feedSettingsById[dropped] {
+                feedSettingsById[survivor] = s
+            }
+            feedSettingsById[dropped] = nil
+            if let tags = tagsByFeedId[dropped] {
+                tagsByFeedId[survivor] = FeedTags.uniqueSorted((tagsByFeedId[survivor] ?? []) + tags)
+                tagsByFeedId[dropped] = nil
+            }
+        }
+        feeds = result.feeds
+    }
+
+    /// gpodder import: a subscription whose feed could not be fetched / parsed stays in the
+    /// library with its error (Android adds "Unknown podcast" and refreshes it later) instead
+    /// of vanishing. A later successful refresh replaces it (same URL key).
+    @discardableResult
+    func addPlaceholderFeed(url: String, error: String) -> PodcastFeed? {
+        let key = FeedURLKey.key(url)
+        guard !key.isEmpty else { return nil }
+        if let i = feeds.firstIndex(where: { $0.urlKeys.contains(key) }) {
+            if feeds[i].episodes.isEmpty { feeds[i].loadError = error }
+            return feeds[i]
+        }
+        var feed = PodcastFeed(
+            id: UUID(), title: URL(string: url)?.host ?? url, feedUrl: url, siteLink: nil, imageUrl: nil,
+            descriptionText: nil, author: nil, language: nil, fundingUrl: nil, fundingLabel: nil,
+            categories: [], isLocked: false, lockedOwner: nil, podcastGuid: nil, episodes: [])
+        feed.loadError = error
+        feeds.append(feed)
+        return feed
+    }
+
+    /// Settings → Reset app data: subscriptions, episodes, queue, downloads, playback state,
+    /// favorites / archive / bookmarks / notes / tags, the gpodder action outbox and caches.
+    /// App settings and the Keychain (gpodder login, feed passwords) are kept.
+    func resetAppData() {
+        playback?.discardLoadedEpisodeForBackupImport()
+        if let downloads {
+            _ = downloads.cancelAllInFlightDownloads()
+            _ = downloads.deleteAllDownloads()
+        }
+        queue = []
+        playbackStates = [:]
+        favoriteAtById = [:]
+        archivedAtById = [:]
+        bookmarksByEpisodeId = [:]
+        episodePrivateNotesById = [:]
+        tagsByFeedId = [:]
+        feedSettingsById = [:]
+        feeds = []
+        gpodderActionQueue.clear()
+        URLCache.shared.removeAllCachedResponses()
+        lastError = nil
         publishWidgetSnapshot()
     }
 
@@ -139,6 +205,7 @@ final class PodcastStore: ObservableObject {
         bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
         episodePrivateNotesById = PodcastPersistence.loadEpisodePrivateNotes()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
+        mergeDuplicateFeeds()
         LocalFolderBookmarkStore.reloadFromPersistence()
         pendingAutoDeleteIds = []
         lastError = nil
@@ -3364,8 +3431,19 @@ final class PodcastStore: ObservableObject {
         // and leaves any previous `lastRefreshedAtEpochMs` untouched. Local-folder feeds
         // never go through this path (Rescan is not a network refresh — leave nil / hide).
         feed.lastRefreshedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
-        if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
+        // Same podcast under another address (http/https, trailing slash, case, redirect):
+        // update that subscription instead of adding a duplicate (Android UrlChecker +
+        // RedirectChecker). The stored feedUrl stays; the other address becomes an alternate.
+        let incomingKeys = feed.urlKeys
+        if let index = feeds.firstIndex(where: { !$0.urlKeys.isDisjoint(with: incomingKeys) }) {
             feed.id = feeds[index].id // keep stable identity across refresh
+            let requestedUrl = feed.feedUrl
+            let finalUrls = feed.alternateUrls ?? []
+            feed.feedUrl = feeds[index].feedUrl
+            feed.alternateUrls = feeds[index].alternateUrls
+            feed.addAlternateUrl(requestedUrl)
+            for u in finalUrls { feed.addAlternateUrl(u) }
+            feed.loadError = nil
             // Many feeds only list their newest items. An episode that left the RSS
             // would also leave Favorites, Archived, and History, which list feed.episodes.
             // Queue and Downloads keep their own copy, but resolve the podcast name,
@@ -3383,6 +3461,7 @@ final class PodcastStore: ObservableObject {
                 )
             }
             feed.episodes.append(contentsOf: kept)
+            feed.episodes = PodcastFeed.uniqueEpisodes(feed.episodes)
             feeds[index] = feed
         } else if onlyIfSubscribed {
             // Refresh all: the podcast was unsubscribed during the network fetch.

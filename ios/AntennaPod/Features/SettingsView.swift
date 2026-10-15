@@ -604,6 +604,9 @@ struct SettingsView: View {
         ) {
             DataBackupSection()
         }
+        if matchesSearch("Reset app data", "App-Daten zurücksetzen") {
+            ResetAppDataSection()
+        }
         if matchesSearch(
             "Import / Export",
             "Export OPML",

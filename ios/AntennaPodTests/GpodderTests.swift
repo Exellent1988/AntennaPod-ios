@@ -177,7 +177,8 @@ final class GpodderSyncLogicTests: XCTestCase {
                      "https://b.example/feed?t=x", "ftp://c/feed", "", "https://local.example/rss"],
             localFeedURLs: ["https://LOCAL.example/rss/"]
         )
-        XCTAssertEqual(todo, ["https://A.example/feed", "https://b.example/Feed?t=X"])
+        // Android UrlChecker.urlEquals: host / path case-insensitive, query exact → ?t=X ≠ ?t=x.
+        XCTAssertEqual(todo, ["https://A.example/feed", "https://b.example/Feed?t=X", "https://b.example/feed?t=x"])
     }
 
     func testRemoteUpdateNewerWinsAndPlayedDetection() {
