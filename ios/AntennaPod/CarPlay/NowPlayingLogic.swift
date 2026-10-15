@@ -2,26 +2,6 @@ import Foundation
 
 /// Pure helpers for CarPlay / system Now Playing and artwork (no UIKit, unit-testable).
 enum NowPlayingLogic {
-    struct ChapterPosition: Equatable {
-        let index: Int      // 0-based, as MPNowPlayingInfoPropertyChapterNumber expects
-        let count: Int
-        let title: String
-    }
-
-    /// Chapter containing `seconds` (last chapter whose start ≤ seconds). Chapters may be unsorted.
-    static func chapter(at seconds: Double, starts: [(start: Double, title: String)]) -> ChapterPosition? {
-        let sorted = starts.filter { $0.start.isFinite }.sorted { $0.start < $1.start }
-        guard !sorted.isEmpty, seconds.isFinite else { return nil }
-        guard let idx = sorted.lastIndex(where: { $0.start <= seconds + 0.001 }) else { return nil }
-        return ChapterPosition(index: idx, count: sorted.count, title: sorted[idx].title)
-    }
-
-    /// Artist line: chapter title when known (so CarPlay/lockscreen show it), else the podcast.
-    static func artistLine(feedName: String, chapterTitle: String?) -> String {
-        guard let c = chapterTitle?.trimmingCharacters(in: .whitespacesAndNewlines), !c.isEmpty else { return feedName }
-        return c
-    }
-
     /// Supported rates for `changePlaybackRateCommand`: presets plus current, sorted, deduped (0.001 tolerance).
     static func supportedRates(presets: [Float], current: Float) -> [Float] {
         var out: [Float] = []

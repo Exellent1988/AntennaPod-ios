@@ -1,10 +1,12 @@
 import XCTest
+import PodcastCore
 @testable import CarPlayLogic
 
 /// Duplicate feed URL spellings and duplicate episode GUIDs at the CarPlay layer.
-/// FeedURLKey / mergeDuplicateFeeds (Android URL equality) live in combined 62a745352, which is NOT
-/// on the feat/ios-carplay-robust base: here twins are whatever the store holds, and CarPlay must
-/// list each, keep per-feed attribution and never trap. Merging twins is the store's job.
+/// URL equality uses the real PodcastCore `FeedURLEquality.key` (what the app's `FeedURLKey.key` forwards to,
+/// Android `UrlChecker.urlEquals`). Merging itself (`FeedLibraryDedupe` / `PodcastStore.mergeDuplicateFeeds`)
+/// needs the real PodcastFeed and runs in XCTest (FeedDedupeTests); here CarPlay must list whatever the
+/// store holds (unmerged twins during refresh/import), keep per-feed attribution and never trap.
 @MainActor
 final class CarPlayDuplicateFeedLinuxTests: XCTestCase {
     static let spellings = [
@@ -85,5 +87,24 @@ final class CarPlayDuplicateFeedLinuxTests: XCTestCase {
         s.queue = feeds.map { $0.episodes[0] }
         let rows = b(s, current: PodcastEpisode(id: "other", title: "x")).upNextRows()
         XCTAssertEqual(rows.map(\.title), feeds.map { $0.episodes[0].title })
+    }
+
+    func testSpellingsAreOneFeedForRealURLEquality() {
+        let keys = Set(Self.spellings.map(FeedURLEquality.key))
+        XCTAssertEqual(keys.count, 1, "Android urlEquals: scheme, slash, host case, :443, whitespace → same feed: \(keys)")
+        XCTAssertNotEqual(FeedURLEquality.key("https://dup.example.com/feed"), FeedURLEquality.key("https://dup.example.com/other"))
+    }
+
+    func testAfterStoreMergeCarPlayListsOneFeedWithAllEpisodes() {
+        // Survivor shape after mergeDuplicateFeeds: one feed, unique episodes.
+        let (s, feeds) = makeStore()
+        var survivor = feeds[0]
+        var seen = Set<String>()
+        survivor.episodes = feeds.flatMap(\.episodes).filter { seen.insert($0.id).inserted }
+        s.feeds = [survivor]
+        let builder = b(s)
+        XCTAssertEqual(builder.subscriptionRows().count, 1)
+        XCTAssertEqual(builder.feedEpisodeRows(survivor.id).count, 1 + Self.spellings.count)
+        XCTAssertEqual(builder.allEpisodeInfos().filter { $0.id == "same-guid" }.count, 1)
     }
 }
