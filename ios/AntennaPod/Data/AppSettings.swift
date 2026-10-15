@@ -1472,6 +1472,7 @@ final class AppSettings: ObservableObject {
         static let subscriptionsDisplayMode = "settings.subscriptionsDisplayMode"
         static let subscriptionsGridColumns = "settings.subscriptionsGridColumns"
         static let subscriptionsGridShowTitles = "settings.subscriptionsGridShowTitles"
+        static let showNewEpisodesBadge = "settings.showNewEpisodesBadge"
         static let subscriptionsCounterMode = "settings.subscriptionsCounterMode"
         static let subscriptionsCounterModeDefaultMigrated = "settings.subscriptionsCounterModeDefaultMigrated"
         static let swipeActions = "settings.swipeActions"
@@ -2424,6 +2425,16 @@ final class AppSettings: ObservableObject {
     @Published var subscriptionsGridShowTitles: Bool {
         didSet { UserDefaults.standard.set(subscriptionsGridShowTitles, forKey: Keys.subscriptionsGridShowTitles) }
     }
+    /// Inbox "new episodes" badge on the tab bar / iPad sidebar. Android keeps the Inbox count in the
+    /// nav drawer (NavListAdapter getNumberOfNewItems) and lets the user clear it with remove_all_inbox_item;
+    /// iOS adds an off switch because the tab-bar badge is always on screen. Default on. Persisted (+ backup).
+    @Published var showNewEpisodesBadge: Bool {
+        didSet { UserDefaults.standard.set(showNewEpisodesBadge, forKey: Keys.showNewEpisodesBadge) }
+    }
+    /// Tab / sidebar Inbox badge value: nil (hidden) when the setting is off or nothing is new.
+    static func newEpisodesBadgeValue(inboxCount: Int, enabled: Bool) -> Int {
+        enabled ? max(inboxCount, 0) : 0
+    }
     /// Badge counter (Android subscriptions_counter). Persisted (+ backup).
     @Published var subscriptionsCounterMode: SubscriptionsCounterMode {
         didSet { UserDefaults.standard.set(subscriptionsCounterMode.rawValue, forKey: Keys.subscriptionsCounterMode) }
@@ -2903,6 +2914,7 @@ final class AppSettings: ObservableObject {
             ud.set(gridShowTitles, forKey: Keys.subscriptionsGridShowTitles)
         }
         subscriptionsCounterMode = Self.migrateCounterModeDefaultOnce(ud)
+        showNewEpisodesBadge = ud.object(forKey: Keys.showNewEpisodesBadge) as? Bool ?? true
         let storedSwipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String]
         swipeActions = Self.initialSwipeActions(stored: storedSwipes, isFreshInstall: isFreshInstall)
         if (storedSwipes ?? [:]).isEmpty, !swipeActions.isEmpty {
@@ -3387,7 +3399,8 @@ final class AppSettings: ObservableObject {
             subscriptionsGridColumns: subscriptionsGridColumns,
             subscriptionsCounterMode: subscriptionsCounterMode.rawValue,
             swipeActions: swipeActions,
-            subscriptionsGridShowTitles: subscriptionsGridShowTitles
+            subscriptionsGridShowTitles: subscriptionsGridShowTitles,
+            showNewEpisodesBadge: showNewEpisodesBadge
         )
     }
 
@@ -3648,6 +3661,9 @@ final class AppSettings: ObservableObject {
         if let showTitles = snap.subscriptionsGridShowTitles {
             subscriptionsGridShowTitles = showTitles
         }
+        if let showBadge = snap.showNewEpisodesBadge {
+            showNewEpisodesBadge = showBadge
+        }
         if let raw = snap.subscriptionsCounterMode {
             subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: raw) ?? .new
         }
@@ -3865,6 +3881,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var swipeActions: [String: String]? = nil
     /// Android pref_show_subscription_title. Absent in older backups → unchanged.
     var subscriptionsGridShowTitles: Bool? = nil
+    /// Inbox new-episodes badge. Absent in older backups → unchanged.
+    var showNewEpisodesBadge: Bool? = nil
 }
 
 extension VolumeAdaptationMode {

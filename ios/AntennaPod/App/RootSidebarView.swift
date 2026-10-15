@@ -128,7 +128,7 @@ struct RootSidebarView: View {
 
     private func badge(for dest: SidebarDestination) -> Int {
         switch dest {
-        case .inbox: store.inboxEpisodes.count
+        case .inbox: AppSettings.newEpisodesBadgeValue(inboxCount: store.inboxEpisodes.count, enabled: settings.showNewEpisodesBadge)
         case .queue: store.queue.count
         case .downloads: downloads.downloads.count
         // Android NavListAdapter: Subscriptions row shows getFeedCounterSum().

@@ -53779,6 +53779,40 @@
         }
       }
     },
+    "Show new episodes badge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show new episodes badge"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Badge für neue Episoden anzeigen"
+          }
+        }
+      }
+    },
+    "Please confirm that you want to remove all from the inbox.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please confirm that you want to remove all from the inbox."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitte bestätige, dass du alles aus dem Posteingang entfernen möchtest."
+          }
+        }
+      }
+    },
     "Add %@ as preset": {
       "extractionState": "manual",
       "localizations": {
