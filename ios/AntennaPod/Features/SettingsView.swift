@@ -2197,10 +2197,16 @@ struct SettingsView: View {
                 .onChange(of: settings.autoDownloadWifiOnly) { _, _ in
                     downloads.pumpWaitingQueue()
                 }
+            Toggle(String(localized: "Download when not charging"), isOn: $settings.autoDownloadOnBattery)
+                .accessibilityHint(String(localized: "Default on. When off, automatic downloads start only while the iPhone is charging. Checked when they are queued after a refresh; a running download is not stopped."))
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Manual download Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.manualDownloadWifiOnly, role: .manualDownload))
                 .accessibilityHint(String(localized: "When on, user-started downloads need Wi‑Fi or Ethernet and a download error is recorded on cellular. Default off — manual downloads may use mobile data. Files already saved stay. Does not start a download by itself. Feed refresh is not limited by this toggle and may use cellular. Not Auto-download or Stream Wi‑Fi only. No VPN or proxy detection."))
+            Toggle(String(localized: "Feed refresh Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.feedRefreshWifiOnly))
+                .accessibilityHint(String(localized: "Android Mobile updates: when on, feeds are not refreshed over mobile data. Automatic refresh is skipped; a refresh you start asks first. Default off."))
+            Toggle(String(localized: "Images Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.imagesWifiOnly))
+                .accessibilityHint(String(localized: "Android Mobile updates: when on, cover images are not downloaded over mobile data; images already in the cache still show. Default off."))
             Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
                 .accessibilityLabel(String(localized: "Stream Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.streamWifiOnly, role: .stream))

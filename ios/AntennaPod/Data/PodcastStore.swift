@@ -186,6 +186,27 @@ final class PodcastStore: ObservableObject {
         return report
     }
 
+    /// Android Feed info → "Edit feed URL": replace this podcast's address (Android replaces the
+    /// download URL; the old one is not kept), then refresh from the new URL. Episodes, progress,
+    /// feed settings and the Keychain login (stored per podcast id) stay. Returns the validation
+    /// outcome; `.ok` also when the refresh fails (the new URL is kept, the error shows as usual).
+    @discardableResult
+    func changeFeedUrl(feedId: UUID, to raw: String, refresh: Bool = true) async -> FeedURLEdit.Outcome {
+        guard let i = feeds.firstIndex(where: { $0.id == feedId }) else { return .invalid }
+        let outcome = FeedURLEdit.validate(raw, currentURLs: [feeds[i].feedUrl],
+                                           otherFeedURLs: feeds.filter { $0.id != feedId }.flatMap(\.allUrls))
+        guard case .ok(let newUrl) = outcome else { return outcome }
+        let old = feeds[i].feedUrl
+        feeds[i].feedUrl = newUrl
+        feeds[i].alternateUrls = (feeds[i].alternateUrls ?? []).filter { FeedURLKey.key($0) != FeedURLKey.key(old) }
+        if feeds[i].alternateUrls?.isEmpty == true { feeds[i].alternateUrls = nil }
+        AppMaintenanceLog.record("feed url changed (podcast \(feedId.uuidString.prefix(8)))")
+        if refresh {
+            _ = try? await subscribeQuietly(feedUrl: newUrl, onlyIfSubscribed: true)
+        }
+        return outcome
+    }
+
     /// Settings → Reset app data: subscriptions, episodes, queue, downloads, playback state,
     /// favorites / archive / bookmarks / notes / tags, the gpodder action outbox and caches.
     /// App settings and the Keychain (gpodder login, feed passwords) are kept.
@@ -3097,7 +3118,25 @@ final class PodcastStore: ObservableObject {
 
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
-    func refreshAllFeeds() async {
+    /// Set when a user-started refresh is blocked by Mobile updates (Android asks first).
+    @Published var mobileRefreshPrompt = false
+
+    /// - Parameters:
+    ///   - userInitiated: toolbar / pull-to-refresh (asks when blocked) vs automatic (skips silently).
+    ///   - allowMobileOnce: "Refresh anyway" from the mobile-data prompt.
+    func refreshAllFeeds(userInitiated: Bool = true, allowMobileOnce: Bool = false) async {
+        // Android prefMobileUpdateTypes `feed_refresh` (FeedUpdateManager.runOnceOrAsk).
+        switch FeedRefreshNetworkDecision.decide(
+            userInitiated: userInitiated, allowOnceOnMobile: allowMobileOnce,
+            allowed: MobileDataGate.allowsIgnoringOffline(.feedRefresh, settings: settings)) {
+        case .run: break
+        case .askUser:
+            mobileRefreshPrompt = true
+            return
+        case .skip:
+            AppMaintenanceLog.record("feed refresh: skipped on mobile data (Mobile updates)")
+            return
+        }
         // Second call while one runs (toolbar Refresh tapped twice, pull-to-refresh during the
         // launch auto-refresh) waits for it instead of starting another pass: both passes
         // snapshotted the same old episode ids, so new episodes were announced, queued, and
