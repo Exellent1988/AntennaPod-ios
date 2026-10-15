@@ -46,7 +46,10 @@ final class OpmlRepeatImportKeyTests: XCTestCase {
         let state = store.opmlImport
         XCTAssertEqual(state.failures.count, 0, "\(state.failures.map(\.url))")
         XCTAssertEqual(state.succeeded, 0)
-        XCTAssertEqual(state.skipped, 1, "three outlines are one podcast: deduped to one, then skipped")
+        // itpc:// and http alias share one key (deduped in the file); alias and variant both match
+        // the stored podcast (feedUrl / alias) and are skipped without a fetch.
+        XCTAssertEqual(state.total, 2)
+        XCTAssertEqual(state.skipped, 2)
         XCTAssertEqual(store.feeds.count, 1)
         XCTAssertEqual(store.feeds.first?.feedUrl, "https://logbuch-netzpolitik.de/feed/mp3", "stored URL unchanged")
     }
