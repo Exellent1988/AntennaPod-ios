@@ -267,9 +267,9 @@ struct RootTabView: View {
         if args.contains("-APDebugOpenSettings") {
             showSettings = true
         }
-        // Grid mode lives in AppSettings (`settings.subscriptionsDisplayMode` = "grid"); this flag sets it too.
+        // Launch-only: SubscriptionsView shows the grid without writing AppSettings
+        // (the persisted setting stays `settings.subscriptionsDisplayMode`).
         if args.contains("-APDebugSubscriptionsGrid") {
-            settings.subscriptionsDisplayMode = .grid
             selectedTab = .subscriptions
         }
         // Opens the episode detail pager on the newest episode of the first podcast.

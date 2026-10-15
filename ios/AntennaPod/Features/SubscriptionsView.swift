@@ -554,7 +554,7 @@ struct SubscriptionsView: View {
             } else {
                 ForEach(groupedSections, id: \.title) { section in
                     Section(section.title) {
-                        if settings.subscriptionsDisplayMode == .grid {
+                        if effectiveDisplayMode == .grid {
                             feedGrid(section.feeds, remaining: remainingByFeedId)
                         } else {
                             ForEach(section.feeds) { feed in
@@ -628,7 +628,7 @@ struct SubscriptionsView: View {
                 } label: {
                     Text("Display")
                 }
-                if settings.subscriptionsDisplayMode == .grid {
+                if effectiveDisplayMode == .grid {
                     Picker(selection: $settings.subscriptionsGridColumns) {
                         ForEach(2...5, id: \.self) { n in
                             Text("\(n) columns").tag(n)
@@ -713,6 +713,11 @@ struct SubscriptionsView: View {
     #else
     static let debugHideLibrary = false
     #endif
+
+    /// Saved mode, or grid for a `-APDebugSubscriptionsGrid` launch (never written back).
+    private var effectiveDisplayMode: SubscriptionsDisplayMode {
+        Self.debugHideLibrary ? .grid : settings.subscriptionsDisplayMode
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
