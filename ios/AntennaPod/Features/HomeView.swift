@@ -825,7 +825,7 @@ struct HomeView: View {
             } label: {
                 HStack(spacing: 4) {
                     Text("See all charts")
-                        .font(.footnote)
+                        .homeMoreLinkStyle()
                     if parental.needsPINForAddDiscover {
                         Image(systemName: "lock.fill")
                             .font(.caption2)
@@ -867,7 +867,7 @@ struct HomeView: View {
                 HistoryView()
             } label: {
                 Text(store.continueListeningEpisodes.count > previewLimit ? String(localized: "See all in History") : String(localized: "Open History"))
-                    .font(.footnote)
+                    .homeMoreLinkStyle()
             }
         }
     }
@@ -903,7 +903,7 @@ struct HomeView: View {
                 Button("See all in Inbox") {
                     selectedTab = .inbox
                 }
-                .font(.footnote)
+                .homeMoreLinkStyle()
             }
         }
     }
@@ -942,7 +942,7 @@ struct HomeView: View {
                 Button("See all in Queue") {
                     selectedTab = .queue
                 }
-                .font(.footnote)
+                .homeMoreLinkStyle()
             }
         }
     }
@@ -984,7 +984,7 @@ struct HomeView: View {
             Button("See all subscriptions") {
                 selectedTab = .subscriptions
             }
-            .font(.footnote)
+            .homeMoreLinkStyle()
         }
     }
 
@@ -1019,7 +1019,7 @@ struct HomeView: View {
                 HistoryView()
             } label: {
                 Text(store.historyEpisodes.count > previewLimit ? String(localized: "See all in History") : String(localized: "Open History"))
-                    .font(.footnote)
+                    .homeMoreLinkStyle()
             }
         }
     }
@@ -1055,7 +1055,7 @@ struct HomeView: View {
                 ArchivedView()
             } label: {
                 Text(store.archivedEpisodes.count > previewLimit ? String(localized: "See all in Archived") : String(localized: "Open Archived"))
-                    .font(.footnote)
+                    .homeMoreLinkStyle()
             }
         }
     }
@@ -1091,7 +1091,7 @@ struct HomeView: View {
                 FavoritesView()
             } label: {
                 Text(store.favoriteEpisodes.count > previewLimit ? String(localized: "See all Favorites") : String(localized: "Open Favorites"))
-                    .font(.footnote)
+                    .homeMoreLinkStyle()
             }
         }
     }
@@ -1134,7 +1134,7 @@ struct HomeView: View {
                 selectedTab = .downloads
             } label: {
                 Text(downloads.downloads.count > previewLimit ? String(localized: "See all in Downloads") : String(localized: "Open Downloads"))
-                    .font(.footnote)
+                    .homeMoreLinkStyle()
             }
         }
     }
@@ -1227,3 +1227,12 @@ extension InboxEpisode: HomeSearchableEpisode {}
 extension FavoriteEpisode: HomeSearchableEpisode {}
 extension ArchivedEpisode: HomeSearchableEpisode {}
 
+
+/// Android HomeSection `moreButton` (Material3 TextButton, accent colour): one style for every
+/// Home "see all / open" link, whether it is a Button or a NavigationLink in a section footer.
+private extension View {
+    func homeMoreLinkStyle() -> some View {
+        self.font(.footnote.weight(.semibold))
+            .foregroundStyle(.tint)
+    }
+}
