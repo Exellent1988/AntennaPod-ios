@@ -146,6 +146,8 @@ final class PlaybackService: ObservableObject {
     private var player: AVPlayer?
     /// Tests: the current player is muted (nil player counts as silent).
     var isOutputMuted: Bool { player?.isMuted ?? true }
+    /// Playback branch's test-hygiene name for the same check.
+    var isOutputMutedForTests: Bool? { player?.isMuted }
     /// Shared player for the full-player video surface (`AVPlayerLayer` / `EpisodeVideoSurface`).
     /// Nil when nothing is loaded. Lockscreen / Now Playing stays metadata-only (no video).
     var avPlayer: AVPlayer? { player }
@@ -392,8 +394,8 @@ final class PlaybackService: ObservableObject {
         newPlayer.rate = rate
         // Sleep-timer fade uses player.volume (0…1). Soft boost (>100%) uses AVAudioMix on the item.
         newPlayer.volume = sleepVolume
-        // Unit tests: silent output (volume stays as the app sets it).
-        if TestHostAudio.isActive { newPlayer.isMuted = true }
+        // Unit tests: silent output (volume stays as the app sets it; the tap still sees the samples).
+        if Self.silentOutput { newPlayer.isMuted = true }
         player = newPlayer
         installAudioPipeline(on: item)
         applyVideoAsAudioOnlyPolicy(to: item)
@@ -2242,10 +2244,17 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// Set by the test bundle (`SettingsLeakObserver`, principal class) before any test: players
+    /// start muted and the audio session is `.ambient` + `.mixWithOthers`, so test runs make no
+    /// sound and never interrupt the Mac's or simulator's other audio. Never set by the app.
+    nonisolated(unsafe) static var silentOutputForTests = false
+    /// XCTest host detected (TestHostAudio) or the test bundle switched silence on.
+    nonisolated static var silentOutput: Bool { TestHostAudio.isActive || silentOutputForTests }
+
     private func activateSession() {
         let mode = preferredAudioSessionMode()
         lastSessionUsedSpokenAudio = mode == .spokenAudio
-        if TestHostAudio.isActive {
+        if Self.silentOutput {
             // Unit tests: fake session, never take over the Mac's audio output.
             TestHostAudio.activatedModes.append(mode)
             setupAudioSessionObserversIfNeeded()
@@ -2277,7 +2286,7 @@ final class PlaybackService: ObservableObject {
     /// gets `.shouldResume`; the next play re-activates via `activateSession()`. Best-effort.
     private func deactivateSessionAfterPlaybackStopped() {
         guard player == nil else { return }
-        if TestHostAudio.isActive { TestHostAudio.deactivationCount += 1; return }
+        if Self.silentOutput { TestHostAudio.deactivationCount += 1; return }
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
@@ -2290,7 +2299,7 @@ final class PlaybackService: ObservableObject {
     /// `AVAudioEngine` graph (would break shared video surface / PiP / Now Playing). This beta keeps
     /// stock `AVPlayer` and uses the session preferred-channel API instead (route-dependent; system may ignore).
     private func applyPreferredOutputChannelCount(on session: AVAudioSession) {
-        if TestHostAudio.isActive { TestHostAudio.preferredChannelRequests += 1; return }
+        if Self.silentOutput { TestHostAudio.preferredChannelRequests += 1; return }
         let maxChannels = session.maximumOutputNumberOfChannels
         guard maxChannels >= 1 else { return }
         let preferred: Int

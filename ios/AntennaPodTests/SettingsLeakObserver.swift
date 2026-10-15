@@ -21,6 +21,8 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
 
     override init() {
         super.init()
+        // Test hygiene: no audible output from any PlaybackService created in this bundle.
+        PlaybackService.silentOutputForTests = true
         XCTestObservationCenter.shared.addTestObserver(self)
         Self.current = self
         Self.recoverFromKilledTest()
