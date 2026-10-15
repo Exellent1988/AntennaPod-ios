@@ -3,6 +3,7 @@ import XCTest
 
 /// Android pref_show_subscription_title: off for new installs (UserPreferences.shouldShowSubscriptionTitle
 /// default false), on for existing iOS users; a saved choice always wins.
+@MainActor
 final class GridTitlesDefaultTests: XCTestCase {
     func testNewInstallStartsWithTitlesOff() {
         XCTAssertFalse(AppSettings.initialGridShowTitles(stored: nil, isFreshInstall: true))

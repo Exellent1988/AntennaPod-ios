@@ -21,14 +21,14 @@ final class EnqueueDownloadedMigrationTests: XCTestCase {
         super.tearDown()
     }
 
-    func testFreshInstallGetsOn() {
+    @MainActor func testFreshInstallGetsOn() {
         let existing = AppSettings.hasExistingAppData(ud, hasStoredFeeds: false)
         XCTAssertFalse(existing)
         AppSettings.migrateEnqueueDownloadedDefault(ud, hasExistingData: existing)
         XCTAssertEqual(ud.object(forKey: key) as? Bool, true)
     }
 
-    func testExistingDataWithoutKeyGetsOff() {
+    @MainActor func testExistingDataWithoutKeyGetsOff() {
         // Library on disk.
         XCTAssertTrue(AppSettings.hasExistingAppData(ud, hasStoredFeeds: true))
         // Older settings keys only.
@@ -39,7 +39,7 @@ final class EnqueueDownloadedMigrationTests: XCTestCase {
         XCTAssertEqual(ud.object(forKey: key) as? Bool, false)
     }
 
-    func testExistingKeyIsNotOverwritten() {
+    @MainActor func testExistingKeyIsNotOverwritten() {
         ud.set(true, forKey: key)
         AppSettings.migrateEnqueueDownloadedDefault(ud, hasExistingData: true)
         XCTAssertEqual(ud.object(forKey: key) as? Bool, true)
