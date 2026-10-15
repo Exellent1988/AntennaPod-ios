@@ -47,6 +47,9 @@ struct AntennaPodApp: App {
         AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
         // Siri / URL-scheme playback actions (antennapod://play etc.).
         PlaybackDeepLinkRouter.shared.attach(playback: playback)
+        #if DEBUG
+        CarPlayDebugSeed.runIfRequested(store: store, playback: playback, downloads: downloads)
+        #endif
         _store = StateObject(wrappedValue: store)
         _playback = StateObject(wrappedValue: playback)
         _downloads = StateObject(wrappedValue: downloads)
