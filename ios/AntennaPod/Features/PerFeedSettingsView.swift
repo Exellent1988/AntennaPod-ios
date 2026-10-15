@@ -51,6 +51,9 @@ struct PerFeedSettingsView: View {
 
     var body: some View {
         Form {
+            if !isLocalFolderFeed {
+                FeedURLEditSection(feedId: feedId)
+            }
             Section {
                 TextField(String(localized: "Display name"), text: $displayNameDraft)
                     .textInputAutocapitalization(.words)

@@ -53778,6 +53778,159 @@
           }
         }
       }
+    },
+    "Download when not charging": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herunterladen, wenn nicht geladen wird"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download when not charging"
+          }
+        }
+      }
+    },
+    "Default on. When off, automatic downloads start only while the iPhone is charging. Checked when they are queued after a refresh; a running download is not stopped.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardmäßig an. Wenn aus, starten automatische Downloads nur, während das iPhone lädt. Geprüft wird beim Einreihen nach einer Aktualisierung; ein laufender Download wird nicht abgebrochen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default on. When off, automatic downloads start only while the iPhone is charging. Checked when they are queued after a refresh; a running download is not stopped."
+          }
+        }
+      }
+    },
+    "Change feed URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL ändern"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change feed URL"
+          }
+        }
+      }
+    },
+    "Change feed URL?": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL ändern?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change feed URL?"
+          }
+        }
+      }
+    },
+    "Only change the address when the podcast moved and the old one no longer works. Episodes, progress and settings are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere die Adresse nur, wenn der Podcast umgezogen ist und die alte nicht mehr funktioniert. Episoden, Fortschritt und Einstellungen bleiben erhalten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only change the address when the podcast moved and the old one no longer works. Episodes, progress and settings are kept."
+          }
+        }
+      }
+    },
+    "A wrong address stops updates for this podcast. The podcast is refreshed from the new address.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine falsche Adresse stoppt die Aktualisierung dieses Podcasts. Der Podcast wird von der neuen Adresse aktualisiert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A wrong address stops updates for this podcast. The podcast is refreshed from the new address."
+          }
+        }
+      }
+    },
+    "Feed URL changed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL geändert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed URL changed."
+          }
+        }
+      }
+    },
+    "Enter a valid http or https address.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine gültige http- oder https-Adresse ein."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid http or https address."
+          }
+        }
+      }
+    },
+    "You are already subscribed to this address.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Adresse hast du bereits abonniert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You are already subscribed to this address."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

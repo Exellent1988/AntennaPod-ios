@@ -2186,6 +2186,8 @@ struct SettingsView: View {
                 .onChange(of: settings.autoDownloadWifiOnly) { _, _ in
                     downloads.pumpWaitingQueue()
                 }
+            Toggle(String(localized: "Download when not charging"), isOn: $settings.autoDownloadOnBattery)
+                .accessibilityHint(String(localized: "Default on. When off, automatic downloads start only while the iPhone is charging. Checked when they are queued after a refresh; a running download is not stopped."))
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Manual download Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.manualDownloadWifiOnly, role: .manualDownload))
