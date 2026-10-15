@@ -58,6 +58,7 @@ struct AntennaPodApp: App {
     var body: some Scene {
         WindowGroup {
             RootTabView()
+                .modifier(MobileRefreshPromptModifier())
                 .environmentObject(store)
                 .environmentObject(playback)
                 .environmentObject(downloads)
