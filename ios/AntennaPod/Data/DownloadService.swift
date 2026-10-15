@@ -408,6 +408,10 @@ final class DownloadService: ObservableObject {
         }
     }
 
+    func downloadedItem(forEpisodeId id: String) -> DownloadedEpisode? {
+        downloads.first(where: { $0.id == id })
+    }
+
     func localURL(for episode: PodcastEpisode) -> URL? {
         if let item = downloads.first(where: { $0.id == episode.id }) {
             let url = item.localFileURL

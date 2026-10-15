@@ -1543,7 +1543,11 @@ final class PodcastStore: ObservableObject {
     /// set is already unplayed). When `AppSettings.remainingTimeRespectsSpeed` is on, divides
     /// each episode by effective feed/default speed (estimate; not session rate). Omits feeds
     /// with zero unplayed (callers treat missing as 0 / hide remaining).
+    /// Computations of `unplayedRemainingByFeedId` (tests: per-redraw budget).
+    private(set) var unplayedRemainingComputeCount = 0
+
     func unplayedRemainingByFeedId() -> [UUID: FeedUnplayedRemainingSummary] {
+        unplayedRemainingComputeCount += 1
         var result: [UUID: FeedUnplayedRemainingSummary] = [:]
         result.reserveCapacity(feeds.count)
         let currentId = playback?.currentEpisode?.id
