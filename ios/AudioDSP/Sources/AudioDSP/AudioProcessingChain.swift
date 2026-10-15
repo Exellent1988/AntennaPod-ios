@@ -128,3 +128,26 @@ public final class GainStage: AudioBlockProcessor {
         return x < 0 ? -y : y
     }
 }
+
+/// Records when audio last passed through the chain, so the app can tell whether the tap is
+/// actually running for the current item (Apple skips taps for HLS / protected items).
+public final class AudioActivityProbe: AudioBlockProcessor {
+    private let lock = NSLock()
+    private var lastBlockUptime: TimeInterval?
+
+    public init() {}
+
+    public func process(_ block: inout AudioBlock) {
+        let now = ProcessInfo.processInfo.systemUptime
+        lock.lock(); lastBlockUptime = now; lock.unlock()
+    }
+
+    public func reset() {}
+
+    /// `true` when a block was processed within `window` seconds.
+    public func isActive(within window: TimeInterval = 1, now: TimeInterval = ProcessInfo.processInfo.systemUptime) -> Bool {
+        lock.lock(); defer { lock.unlock() }
+        guard let last = lastBlockUptime else { return false }
+        return now - last <= window
+    }
+}

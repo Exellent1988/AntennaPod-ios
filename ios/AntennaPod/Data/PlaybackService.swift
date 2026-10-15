@@ -154,6 +154,12 @@ final class PlaybackService: ObservableObject {
     private var sleepTimerPausedRemaining: Double?
     private var sleepTimerDidFade = false
     private var sleepVolume: Float = 1.0
+    /// Clock length at start / last reset (Android `initialWaitingTime`), for shake-to-reset.
+    private var sleepTimerInitialSeconds: Double?
+    private var sleepTimerDidVibrate = false
+    private let sleepTimerDevice = SleepTimerDeviceFeedback()
+    /// `true` while the running clock timer was started by Auto-enable (sheet offers Undo).
+    @Published private(set) var sleepTimerWasAutoEnabled = false
     /// Wall-clock chapter end (seconds) snapped when end-of-chapter mode can resolve a boundary.
     /// `nil` until chapters (and last-chapter duration if needed) are known — then locked.
     private var sleepTimerChapterEndSeconds: Double?
@@ -413,6 +419,7 @@ final class PlaybackService: ObservableObject {
         activateSession()
         setupRemoteCommandsIfNeeded()
         resumeSleepTimerIfNeeded()
+        autoEnableSleepTimerIfNeeded()
         updateNowPlayingInfo(force: true)
         loadArtworkIfNeeded()
         store?.touchLastPlayed(episode.id)
@@ -461,6 +468,7 @@ final class PlaybackService: ObservableObject {
             player.rate = rate
             isPlaying = true
             resumeSleepTimerIfNeeded()
+            autoEnableSleepTimerIfNeeded()
         }
         updateNowPlayingInfo(force: true)
         applyIdleTimerPolicy()
@@ -794,9 +802,11 @@ final class PlaybackService: ObservableObject {
     // MARK: - Sleep timer
 
     /// Start a clock timer for the given minutes (replaces any active timer).
-    func setSleepTimer(minutes: Int) {
+    func setSleepTimer(minutes: Int, remember: Bool = true) {
         guard minutes > 0 else { return }
         clearSleepTimerState(restoreVolume: true)
+        if remember { settings?.lastSleepTimerMinutes = AppSettings.clampSleepMinutes(minutes) }
+        sleepTimerInitialSeconds = Double(minutes * 60)
         sleepTimerMode = .clock(minutes: minutes)
         isSleepTimerActive = true
         sleepTimerDidFade = false
@@ -892,12 +902,42 @@ final class PlaybackService: ObservableObject {
             }
             sleepTimerRemainingSeconds = next
         case .endOfEpisode, .endOfChapter, .endOfQueue, .none:
-            setSleepTimer(minutes: minutes)
+            setSleepTimer(minutes: minutes, remember: false)
         }
     }
 
     func disableSleepTimer() {
         clearSleepTimerState(restoreVolume: true)
+    }
+
+    /// Android auto-enable: on playback start, inside the hour window, with no timer running,
+    /// start the last-used clock timer. Undo = `disableSleepTimer()`.
+    func autoEnableSleepTimerIfNeeded(now: Date = Date()) {
+        guard let settings else { return }
+        let hour = Calendar.current.component(.hour, from: now)
+        guard SleepTimerLogic.shouldAutoEnable(
+            enabled: settings.sleepTimerAutoEnable, timerActive: isSleepTimerActive,
+            fromHour: settings.sleepTimerAutoEnableFromHour, toHour: settings.sleepTimerAutoEnableToHour,
+            hour: hour
+        ) else { return }
+        setSleepTimer(minutes: settings.lastSleepTimerMinutes, remember: false)
+        sleepTimerWasAutoEnabled = true
+    }
+
+    /// Android `ClockSleepTimer.reset` (shake): back to the initial length, fade undone.
+    func resetSleepTimerToInitial() {
+        guard isSleepTimerActive, case .clock = sleepTimerMode, let initial = sleepTimerInitialSeconds else { return }
+        cancelSleepTimerFade(restoreVolume: true)
+        sleepTimerDidVibrate = false
+        sleepTimerDevice.stopShakeDetection()
+        if isPlaying {
+            sleepTimerEndDate = Date().addingTimeInterval(initial)
+            sleepTimerPausedRemaining = nil
+        } else {
+            sleepTimerEndDate = nil
+            sleepTimerPausedRemaining = initial
+        }
+        sleepTimerRemainingSeconds = initial
     }
 
     var sleepTimerStatusLabel: String? {
@@ -1506,16 +1546,44 @@ final class PlaybackService: ObservableObject {
             // Extended past fade window, or fade disabled mid-window → restore.
             cancelSleepTimerFade(restoreVolume: true)
         }
+
+        // Android notifyAboutExpiry: once inside the last 10 s, vibrate once and listen for shakes.
+        if SleepTimerLogic.isInWarningWindow(remaining: remaining) {
+            if settings?.sleepTimerVibrate == true, !sleepTimerDidVibrate {
+                sleepTimerDidVibrate = true
+                sleepTimerDevice.vibrate()
+            }
+            if settings?.sleepTimerShakeToReset ?? true, !sleepTimerDevice.isListeningForShake {
+                sleepTimerDevice.startShakeDetection { [weak self] in
+                    guard let self else { return }
+                    self.resetSleepTimerToInitial()
+                    self.sleepTimerDevice.vibrate()   // Android ShakeListener confirms with a buzz.
+                }
+            }
+        } else if sleepTimerDevice.isListeningForShake {
+            sleepTimerDevice.stopShakeDetection()
+        }
+    }
+
+    /// Fade factor through the pipeline's fade stage when the tap is running (smooth, per block);
+    /// otherwise (HLS / no tap yet) through `AVPlayer.volume`. Never both, so it never doubles.
+    private func setSleepFadeFactor(_ factor: Float) {
+        sleepVolume = factor
+        if let pipeline = audioPipeline, pipeline.activity.isActive() {
+            pipeline.fade.gain = factor
+            player?.volume = 1
+        } else {
+            audioPipeline?.fade.gain = 1
+            player?.volume = factor
+        }
     }
 
     private func applyFade(remaining: Double) {
         // Linear fade toward 0 over the last `fadeThresholdSeconds` (Android Media3
         // millisLeft / NOTIFICATION_THRESHOLD). Soft `AVPlayer.volume` only — volume
         // boost stays on AVAudioMix; volume adaptation is session mode, not a multiplier.
-        let fraction = max(0.0, min(1.0, remaining / Self.fadeThresholdSeconds))
-        let volume = Float(fraction)
-        sleepVolume = volume
-        player?.volume = volume
+        // Android PlaybackService multipliers (0.8 → 0.1 over the last 10 s), interpolated.
+        setSleepFadeFactor(SleepTimerLogic.fadeVolume(remaining: remaining))
         sleepTimerDidFade = true
     }
 
@@ -1525,16 +1593,14 @@ final class PlaybackService: ObservableObject {
     func cancelSleepTimerFade(restoreVolume: Bool) {
         guard sleepTimerDidFade || sleepVolume < 0.999 else {
             if restoreVolume {
-                sleepVolume = 1.0
-                player?.volume = 1.0
+                setSleepFadeFactor(1)
             }
             sleepTimerDidFade = false
             return
         }
         sleepTimerDidFade = false
         if restoreVolume {
-            sleepVolume = 1.0
-            player?.volume = 1.0
+            setSleepFadeFactor(1)
         }
     }
 
@@ -1649,6 +1715,10 @@ final class PlaybackService: ObservableObject {
         sleepTimerEndDate = nil
         sleepTimerPausedRemaining = nil
         sleepTimerChapterEndSeconds = nil
+        sleepTimerInitialSeconds = nil
+        sleepTimerDidVibrate = false
+        sleepTimerWasAutoEnabled = false
+        sleepTimerDevice.stopShakeDetection()
         // Cancel fade + restore (disable / fire / replace timer).
         cancelSleepTimerFade(restoreVolume: restoreVolume)
     }

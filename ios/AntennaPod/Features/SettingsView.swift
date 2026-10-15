@@ -946,7 +946,10 @@ struct SettingsView: View {
     private var matchesPlaybackSleepTimerFade: Bool {
         matchesSearch(
             "Sleep timer volume fade",
-            "When on, clock sleep timer linearly lowers AVPlayer.volume over the last ~10 seconds before pause. End-of-episode / end-of-chapter do not fade. Not equal-loudness / ReplayGain; may be coarse with stock AVPlayer. Volume boost stays on AVAudioMix. Default on (Android always fades)."
+            "Sleep timer",
+            "Shake to reset",
+            "Vibrate before the end",
+            "Auto-enable"
         )
     }
 
@@ -1461,7 +1464,13 @@ struct SettingsView: View {
             if matchesPlaybackSleepTimerFade {
                 Toggle("Sleep timer volume fade", isOn: $settings.sleepTimerFadeEnabled)
                     .accessibilityHint(String(localized: "When on, clock sleep timer lowers player volume over the last ~10 seconds before pause. End of episode or chapter do not fade. Soft player volume only — not equal-loudness or ReplayGain. Volume boost stays separate. Pause, seek, or cancel timer restores pre-fade volume. Default on. Changing this does not start a sleep timer or change playback now."))
-                Text("When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle).")
+                Text("When on, a clock sleep timer fades out over the last 10 seconds before it pauses, with Android's volume steps (80% down to 10%). The fade runs in the playback audio pipeline, so it is smooth and independent of Volume boost; HLS streams fall back to player volume. Playback rewinds 5 seconds after the pause. End of episode / chapter / queue do not fade. Default on.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackSleepTimerFade {
+                SleepTimerOptionRows(includeFade: false)
+                Text("Android sleep timer options: in the last 10 seconds of a clock timer the phone vibrates once (if on) and shaking it restarts the timer. Auto-enable starts the last used timer (\(settings.lastSleepTimerMinutes) min) whenever playback starts within the chosen hours; From = To means all day.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

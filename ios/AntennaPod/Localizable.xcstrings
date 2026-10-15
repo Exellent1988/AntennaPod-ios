@@ -30062,40 +30062,6 @@
         }
       }
     },
-    "When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle).": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle)."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn an, senkt der Uhr-Schlaf-Timer `AVPlayer.volume` linear in den letzten ~10 Sekunden vor dem Pausieren (Android `NOTIFICATION_THRESHOLD`). Ende der Episode / des Kapitels **faden nicht**. Nur weiche Player-Lautstärke — **keine** Equal-Loudness / ReplayGain; mit stock-`AVPlayer` ggf. grob. Lautstärke-Verstärkung bleibt auf `AVAudioMix`. Pause / Seek / Timer abbrechen stellt die Lautstärke vor dem Fade wieder her. Standard **an** (Android fadet immer; kein Android-Aus-Schalter)."
-          }
-        }
-      }
-    },
-    "When on, clock sleep timer linearly lowers AVPlayer.volume over the last ~10 seconds before pause. End-of-episode / end-of-chapter do not fade. Not equal-loudness / ReplayGain; may be coarse with stock AVPlayer. Volume boost stays on AVAudioMix. Default on (Android always fades).": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, clock sleep timer linearly lowers AVPlayer.volume over the last ~10 seconds before pause. End-of-episode / end-of-chapter do not fade. Not equal-loudness / ReplayGain; may be coarse with stock AVPlayer. Volume boost stays on AVAudioMix. Default on (Android always fades)."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn an, senkt der Uhr-Schlaf-Timer AVPlayer.volume linear in den letzten ~10 Sekunden vor dem Pausieren. Ende der Episode / des Kapitels faden nicht. Keine Equal-Loudness / ReplayGain; mit stock-AVPlayer ggf. grob. Lautstärke-Verstärkung bleibt auf AVAudioMix. Standard an (Android fadet immer)."
-          }
-        }
-      }
-    },
     "Add bookmark": {
       "extractionState": "manual",
       "localizations": {
@@ -51907,6 +51873,329 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sekunden, die am Ende einer Folge übersprungen werden; danach startet die nächste Folge (0 bis 3600). 0 schaltet es aus."
+          }
+        }
+      }
+    },
+    "Turned on automatically (Auto-enable).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turned on automatically (Auto-enable)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch eingeschaltet (Automatisch aktivieren)."
+          }
+        }
+      }
+    },
+    "+%lld min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+%lld Min."
+          }
+        }
+      }
+    },
+    "Extend by %lld minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extend by %lld minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um %lld Minuten verlängern"
+          }
+        }
+      }
+    },
+    "Undo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rückgängig"
+          }
+        }
+      }
+    },
+    "Timer active": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer active"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Timer aktiv"
+          }
+        }
+      }
+    },
+    "min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Min."
+          }
+        }
+      }
+    },
+    "Start": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starten"
+          }
+        }
+      }
+    },
+    "Shake to reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shake to reset"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schütteln zum Zurücksetzen"
+          }
+        }
+      }
+    },
+    "During the last 10 seconds, shaking the phone restarts the timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "During the last 10 seconds, shaking the phone restarts the timer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In den letzten 10 Sekunden startet Schütteln des Telefons den Timer neu."
+          }
+        }
+      }
+    },
+    "Vibrate before the end": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vibrate before the end"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vor dem Ende vibrieren"
+          }
+        }
+      }
+    },
+    "Vibrates once about 10 seconds before the timer ends.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vibrates once about 10 seconds before the timer ends."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vibriert einmal etwa 10 Sekunden vor Ablauf des Timers."
+          }
+        }
+      }
+    },
+    "Auto-enable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-enable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch aktivieren"
+          }
+        }
+      }
+    },
+    "Starts the last used timer when playback starts within the chosen hours.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts the last used timer when playback starts within the chosen hours."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet den zuletzt genutzten Timer, wenn die Wiedergabe im gewählten Zeitraum beginnt."
+          }
+        }
+      }
+    },
+    "From": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von"
+          }
+        }
+      }
+    },
+    "To": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bis"
+          }
+        }
+      }
+    },
+    "Starts a %lld-minute timer whenever playback starts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts a %lld-minute timer whenever playback starts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet bei jedem Wiedergabestart einen Timer über %lld Minuten."
+          }
+        }
+      }
+    },
+    "Starts a %lld-minute timer when playback starts between %@ and %@.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts a %lld-minute timer when playback starts between %@ and %@."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet einen Timer über %lld Minuten, wenn die Wiedergabe zwischen %@ und %@ beginnt."
+          }
+        }
+      }
+    },
+    "When on, a clock sleep timer fades out over the last 10 seconds before it pauses, with Android's volume steps (80% down to 10%). The fade runs in the playback audio pipeline, so it is smooth and independent of Volume boost; HLS streams fall back to player volume. Playback rewinds 5 seconds after the pause. End of episode / chapter / queue do not fade. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, a clock sleep timer fades out over the last 10 seconds before it pauses, with Android's volume steps (80% down to 10%). The fade runs in the playback audio pipeline, so it is smooth and independent of Volume boost; HLS streams fall back to player volume. Playback rewinds 5 seconds after the pause. End of episode / chapter / queue do not fade. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, blendet ein Schlaf-Timer mit Zeitvorgabe in den letzten 10 Sekunden vor der Pause aus, mit Androids Lautstärkestufen (80 % bis 10 %). Das Ausblenden läuft in der Audio-Pipeline der Wiedergabe, ist daher weich und unabhängig von der Lautstärkeverstärkung; HLS-Streams nutzen ersatzweise die Player-Lautstärke. Nach der Pause wird 5 Sekunden zurückgespult. Ende der Episode / des Kapitels / der Warteschlange blenden nicht aus. Standard: an."
+          }
+        }
+      }
+    },
+    "Android sleep timer options: in the last 10 seconds of a clock timer the phone vibrates once (if on) and shaking it restarts the timer. Auto-enable starts the last used timer (%lld min) whenever playback starts within the chosen hours; From = To means all day.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Android sleep timer options: in the last 10 seconds of a clock timer the phone vibrates once (if on) and shaking it restarts the timer. Auto-enable starts the last used timer (%lld min) whenever playback starts within the chosen hours; From = To means all day."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer-Optionen wie bei Android: In den letzten 10 Sekunden eines Timers mit Zeitvorgabe vibriert das Telefon einmal (falls aktiv), und Schütteln startet den Timer neu. „Automatisch aktivieren“ startet den zuletzt genutzten Timer (%lld Min.), sobald die Wiedergabe im gewählten Zeitraum beginnt; Von = Bis bedeutet ganztägig."
           }
         }
       }
