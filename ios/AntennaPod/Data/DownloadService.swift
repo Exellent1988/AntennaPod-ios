@@ -244,6 +244,8 @@ final class DownloadService: ObservableObject {
     @Published var lastError: String?
     /// Recent download failures (newest first; Application Support ring buffer).
     @Published private(set) var recentErrors: [DownloadErrorEntry] = []
+    /// Successes and failures, newest first (Android DownloadLog). Shown in the Download log.
+    @Published private(set) var history: [DownloadHistoryEntry] = []
     /// Last measured size of the downloads folder (refreshed on load / eviction / settings).
     @Published private(set) var storageUsage = DownloadStorageUsage(usedBytes: 0, fileCount: 0, limitBytes: nil)
 
@@ -320,6 +322,7 @@ final class DownloadService: ObservableObject {
         reconnectOutstandingTasks()
         refreshStorageUsage()
         recentErrors = PodcastPersistence.loadDownloadErrors()
+        history = DownloadHistoryLog.load()
         NetworkPathGate.shared.onPathApplied = { [weak self] in
             self?.pumpWaitingQueue()
         }
@@ -1064,6 +1067,13 @@ final class DownloadService: ObservableObject {
         downloads.removeAll { $0.id == item.id }
         downloads.append(item)
         persistCompleted()
+        recordHistory(DownloadHistoryEntry(
+            episodeId: episode.id,
+            episodeTitle: episode.title,
+            feedTitle: item.feedTitle ?? "",
+            succeeded: true,
+            byteSize: item.knownByteSize()
+        ))
         refreshStorageUsage()
         // Keep the episode we just finished; evict older/played peers if over budget.
         _ = enforceStorageLimit(keepEpisodeId: episode.id)
@@ -1122,6 +1132,16 @@ final class DownloadService: ObservableObject {
     }
 
     /// Clears the persisted error ring buffer and the banner `lastError`.
+    private func recordHistory(_ entry: DownloadHistoryEntry) {
+        history = DownloadHistoryLog.appending(entry, to: history)
+        DownloadHistoryLog.save(history)
+    }
+
+    func clearDownloadHistory() {
+        history = []
+        DownloadHistoryLog.save([])
+    }
+
     func clearDownloadErrors() {
         recentErrors = []
         lastError = nil
@@ -1192,6 +1212,13 @@ final class DownloadService: ObservableObject {
             feedTitle: feedTitle,
             message: message
         )
+        recordHistory(DownloadHistoryEntry(
+            episodeId: episode.id,
+            episodeTitle: episode.title,
+            feedTitle: feedTitle,
+            succeeded: false,
+            message: message
+        ))
         var next = recentErrors
         next.insert(entry, at: 0)
         if next.count > Self.downloadErrorRingCapacity {
