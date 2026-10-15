@@ -155,6 +155,9 @@ struct RootTabView: View {
                 }
                 .tag(RootTab.subscriptions)
                 .modifier(TabMiniPlayerInset(tab: .subscriptions, selectedTab: selectedTab))
+                // Android NavListAdapter: Subscriptions shows getFeedCounterSum() (sum of the per-feed counters
+                // chosen in subscriptions_counter). No counter mode -> no badge; 0 hides it.
+                .badge(subscriptionsCounterSum)
             QueueView()
                 .id(tabRootResets[.queue, default: 0])
                 .tabItem {
@@ -176,6 +179,11 @@ struct RootTabView: View {
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(downloads.downloads.count)
         }
+    }
+
+    /// Sum of the Subscriptions per-feed counters for the current counter mode (Android getFeedCounterSum).
+    private var subscriptionsCounterSum: Int {
+        settings.subscriptionsCounterMode.badgeSum(store: store, downloads: downloads)
     }
 
     private func settingsObserversStage<Content: View>(_ content: Content) -> some View {

@@ -61,6 +61,7 @@ enum SidebarDestination: String, Hashable, CaseIterable, Identifiable {
 struct RootSidebarView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var settings: AppSettings
     @Binding var selectedTab: RootTab
     @Binding var showSettings: Bool
     @State private var selection: SidebarDestination? = .home
@@ -107,6 +108,8 @@ struct RootSidebarView: View {
         case .inbox: store.inboxEpisodes.count
         case .queue: store.queue.count
         case .downloads: downloads.downloads.count
+        // Android NavListAdapter: Subscriptions row shows getFeedCounterSum().
+        case .subscriptions: settings.subscriptionsCounterMode.badgeSum(store: store, downloads: downloads)
         default: 0
         }
     }
@@ -122,6 +125,23 @@ struct RootSidebarView: View {
         case .episodes: NavigationStack { AllEpisodesView() }
         case .history: NavigationStack { HistoryView() }
         case .favorites: NavigationStack { FavoritesView() }
+        }
+    }
+}
+
+extension SubscriptionsCounterMode {
+    /// Sum of the Subscriptions per-feed counters for this mode (Android NavDrawerFragment getFeedCounterSum).
+    /// Same rules as the per-feed badge: unplayed = !played && !archived; downloaded = completed downloads.
+    @MainActor
+    func badgeSum(store: PodcastStore, downloads: DownloadService) -> Int {
+        switch self {
+        case .none:
+            return 0
+        case .unplayed:
+            return store.unplayedCountsByFeedId().values.reduce(0, +)
+        case .downloaded:
+            let ids = Set(store.feeds.flatMap { $0.episodes.map(\.id) })
+            return downloads.downloads.filter { ids.contains($0.episode.id) }.count
         }
     }
 }
