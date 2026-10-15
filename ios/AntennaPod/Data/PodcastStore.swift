@@ -1913,6 +1913,28 @@ final class PodcastStore: ObservableObject {
         archivedAtById = map
     }
 
+    /// Inbox episodes of one podcast (`!isPlayed && !isArchived`, same rule as `inboxEpisodes`).
+    func inboxEpisodeIds(inFeed feedId: UUID) -> [String] {
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return [] }
+        return feed.episodes
+            .filter { !isPlayed($0.id) && !isArchived($0.id) }
+            .map(\.id)
+    }
+
+    /// Android nav_feed_context `remove_all_inbox_item` (DBWriter.removeFeedNewFlag): take one podcast's
+    /// episodes out of the Inbox. On iOS leaving the Inbox means archiving (same as `archiveAllInbox`);
+    /// played state, queue and downloads are unchanged. Callers confirm first.
+    func archiveAllInbox(inFeed feedId: UUID) {
+        let ids = inboxEpisodeIds(inFeed: feedId)
+        guard !ids.isEmpty else { return }
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids where map[id] == nil {
+            map[id] = now
+        }
+        archivedAtById = map
+    }
+
     /// Mark every episode currently in the Inbox list as played (bulk).
     /// Snapshots Inbox ids first, then calls `markPlayed` per id so auto-delete-after-playing
     /// and queue removal side effects still apply. Does not touch All Episodes / History lists.

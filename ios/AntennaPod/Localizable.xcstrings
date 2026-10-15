@@ -53026,6 +53026,36 @@
         }
       }
     },
+    "Remove all from inbox?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle aus dem Posteingang entfernen?"
+          }
+        }
+      }
+    },
+    "Remove all from inbox": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle aus dem Posteingang entfernen"
+          }
+        }
+      }
+    },
+    "Archives the %lld Inbox episodes of this podcast. Does not mark them played, delete downloads, or change the queue.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert die %lld Posteingang-Episoden dieses Podcasts. Markiert sie nicht als gespielt, löscht keine Downloads und ändert die Warteschlange nicht."
+          }
+        }
+      }
+    },
     "Delete removes from queue": {
       "extractionState": "manual",
       "localizations": {

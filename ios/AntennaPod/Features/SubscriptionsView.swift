@@ -25,6 +25,8 @@ struct SubscriptionsView: View {
     @State private var tagFilter: SubscriptionTagFilter = .all
     @State private var groupByTag = true
     @State private var feedPendingUnsubscribe: PodcastFeed?
+    /// Android nav_feed_context remove_all_inbox_item confirmation.
+    @State private var feedPendingInboxRemoval: PodcastFeed?
     @State private var showUnpinAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
@@ -854,6 +856,23 @@ struct SubscriptionsView: View {
                 Text("Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference.")
             }
             .confirmationDialog(
+                "Remove all from inbox?",
+                isPresented: Binding<Bool>(
+                    get: { feedPendingInboxRemoval != nil },
+                    set: { (isPresented: Bool) in if !isPresented { feedPendingInboxRemoval = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: feedPendingInboxRemoval
+            ) { feed in
+                Button("Remove all from inbox", role: .destructive) {
+                    store.archiveAllInbox(inFeed: feed.id)
+                    feedPendingInboxRemoval = nil
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: { feed in
+                Text("Archives the \(store.inboxEpisodeIds(inFeed: feed.id).count) Inbox episodes of this podcast. Does not mark them played, delete downloads, or change the queue.")
+            }
+            .confirmationDialog(
                 "Unsubscribe?",
                 isPresented: Binding<Bool>(
                     get: { feedPendingUnsubscribe != nil },
@@ -1314,6 +1333,7 @@ struct SubscriptionsView: View {
             onTogglePin: { store.togglePinned(feedId: feed.id) },
             onOpenSettings: { feedForSettings = feed },
             onUnsubscribe: { feedPendingUnsubscribe = feed },
+            onRemoveAllFromInbox: store.inboxEpisodeIds(inFeed: feed.id).isEmpty ? nil : { feedPendingInboxRemoval = feed },
             onCopyPodcastTitle: { title in
                 copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(title)
                 copyFeedbackTick += 1
@@ -1449,6 +1469,8 @@ private struct SubscriptionRowContextMenu: ViewModifier {
     let onOpenSettings: () -> Void
     /// Opens the same confirmation as the Unsubscribe swipe (no new delete path).
     let onUnsubscribe: () -> Void
+    /// Nil when this podcast has nothing in the Inbox (hides the entry).
+    let onRemoveAllFromInbox: (() -> Void)?
     let onCopyPodcastTitle: (String) -> Void
 
     func body(content: Content) -> some View {
@@ -1499,6 +1521,15 @@ private struct SubscriptionRowContextMenu: ViewModifier {
                 }
                 .accessibilityLabel(String(localized: "Open podcast website"))
                 .accessibilityHint(String(localized: "Opens the feed-provided podcast website http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the feed RSS URL or an episode webpage. Distinct from Open episode website, Copy podcast website, and Share podcast website. Does not subscribe, download, or change playback."))
+            }
+
+            // Android nav_feed_context remove_all_inbox_item (asks for confirmation first).
+            if let onRemoveAllFromInbox {
+                Button {
+                    onRemoveAllFromInbox()
+                } label: {
+                    Label("Remove all from inbox", systemImage: "tray.and.arrow.up")
+                }
             }
 
             // Android nav_feed_context share_feed (ShareUtils.shareFeedLink).
