@@ -14,8 +14,8 @@ final class NewEpisodesBadgeTests: XCTestCase {
 
     func testDefaultOnAndBackupRoundTrip() throws {
         let settings = AppSettings()
-        let saved = settings.showNewEpisodesBadge
-        defer { settings.showNewEpisodesBadge = saved }
+        let original = settings.backupSnapshot()
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.showNewEpisodesBadge = false
         let snap = try JSONDecoder().decode(AppSettingsBackupSnapshot.self,
                                             from: JSONEncoder().encode(settings.backupSnapshot()))
