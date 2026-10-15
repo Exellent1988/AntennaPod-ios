@@ -238,6 +238,10 @@ enum FeedDownloadUnplayedSoftCap: Int, CaseIterable, Identifiable {
 /// `0` = Unlimited. When over the cap, `DownloadService` evicts eligible files
 /// (played non-favorite non-queued first; favorites and queued are never auto-deleted by this cap).
 enum DownloadEpisodeCacheLimit: Int, CaseIterable, Identifiable {
+    case five = 5
+    case ten = 10
+    /// Android `prefEpisodeCacheSize` default (new installs).
+    case twenty = 20
     case twentyFive = 25
     case fifty = 50
     case oneHundred = 100
@@ -254,6 +258,9 @@ enum DownloadEpisodeCacheLimit: Int, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
+        case .five: return String(localized: "5 episodes")
+        case .ten: return String(localized: "10 episodes")
+        case .twenty: return String(localized: "20 episodes")
         case .twentyFive: return String(localized: "25 episodes")
         case .fifty: return String(localized: "50 episodes")
         case .oneHundred: return String(localized: "100 episodes")
@@ -1327,6 +1334,8 @@ final class AppSettings: ObservableObject {
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let maxParallelDownloads = "settings.maxParallelDownloads"
         static let downloadEpisodeCacheLimit = "settings.downloadEpisodeCacheLimit"
+        static let episodeCleanup = "settings.episodeCleanup"
+        static let streamOverDownload = "settings.streamOverDownload"
         static let feedDownloadUnplayedSoftCap = "settings.feedDownloadUnplayedSoftCap"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
         static let manualDownloadWifiOnly = "settings.manualDownload.wifiOnly"
@@ -1508,7 +1517,17 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Max completed offline downloads to keep (25/50/100/200/500 or Unlimited). Default Unlimited.
+    /// Android `prefEpisodeCleanup` (default Never, global): which downloads the episode limit
+    /// may delete to make room for auto-downloads.
+    @Published var episodeCleanup: EpisodeCleanup {
+        didSet { UserDefaults.standard.set(episodeCleanup.androidValue, forKey: Keys.episodeCleanup) }
+    }
+    /// Android `prefStreamOverDownload` (default off, global): rows offer Stream instead of Download.
+    @Published var streamOverDownload: Bool {
+        didSet { UserDefaults.standard.set(streamOverDownload, forKey: Keys.streamOverDownload) }
+    }
+    /// Android `prefEpisodeCacheSize` (5/10/20/25/50/100/200/500 or Unlimited). Default 20 on new
+    /// installs (Android), Unlimited kept for installs from before this setting.
     @Published var downloadEpisodeCacheLimit: DownloadEpisodeCacheLimit {
         didSet {
             UserDefaults.standard.set(downloadEpisodeCacheLimit.rawValue, forKey: Keys.downloadEpisodeCacheLimit)
@@ -2491,7 +2510,9 @@ final class AppSettings: ObservableObject {
 
     init() {
         let isFreshInstall = Self.isFreshInstall()
-        Self.migrateEnqueueDownloadedDefault(hasExistingData: Self.hasExistingAppData())
+        let hasExistingData = Self.hasExistingAppData()
+        Self.migrateEnqueueDownloadedDefault(hasExistingData: hasExistingData)
+        Self.migrateEpisodeCleanupDefaults(hasExistingData: hasExistingData)
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
         let accentRaw = UserDefaults.standard.string(forKey: Keys.accentColor) ?? AppAccentColor.system.rawValue
@@ -2536,6 +2557,9 @@ final class AppSettings: ObservableObject {
         let cacheRaw = UserDefaults.standard.object(forKey: Keys.downloadEpisodeCacheLimit) as? Int
             ?? DownloadEpisodeCacheLimit.unlimited.rawValue
         downloadEpisodeCacheLimit = DownloadEpisodeCacheLimit(rawValue: cacheRaw) ?? .unlimited
+        episodeCleanup = EpisodeCleanup(
+            androidValue: UserDefaults.standard.object(forKey: Keys.episodeCleanup) as? Int ?? EpisodeCleanup.default.androidValue)
+        streamOverDownload = UserDefaults.standard.object(forKey: Keys.streamOverDownload) as? Bool ?? false
         let feedDlSoftCapRaw = UserDefaults.standard.object(forKey: Keys.feedDownloadUnplayedSoftCap) as? Int
             ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
         feedDownloadUnplayedSoftCap = FeedDownloadUnplayedSoftCap(rawValue: feedDlSoftCapRaw) ?? .fifty
@@ -2883,10 +2907,26 @@ final class AppSettings: ObservableObject {
     }
 
     /// Existing install: saved library (subscriptions/episodes) or any earlier AppSettings key.
+    /// Episode limit (Android default 20) and cleanup (Android default Never) for a missing key.
+    /// Existing installs keep Unlimited; one that already had a limit keeps the old iOS eviction
+    /// (any non-favorite, non-queued download = Android "When not in queue").
+    static func migrateEpisodeCleanupDefaults(_ ud: UserDefaults = .standard, hasExistingData: Bool) {
+        if case .some(let size) = EpisodeCleanupPolicy.migratedCacheSize(
+            keyPresent: ud.object(forKey: Keys.downloadEpisodeCacheLimit) != nil, hasExistingData: hasExistingData) {
+            ud.set(size ?? DownloadEpisodeCacheLimit.unlimited.rawValue, forKey: Keys.downloadEpisodeCacheLimit)
+        }
+        let rawLimit = ud.object(forKey: Keys.downloadEpisodeCacheLimit) as? Int ?? 0
+        if let cleanup = EpisodeCleanupPolicy.migratedCleanup(
+            keyPresent: ud.object(forKey: Keys.episodeCleanup) != nil,
+            existingCacheLimit: hasExistingData && rawLimit > 0 ? rawLimit : nil) {
+            ud.set(cleanup.androidValue, forKey: Keys.episodeCleanup)
+        }
+    }
+
     static func hasExistingAppData(_ ud: UserDefaults = .standard, hasStoredFeeds: Bool = PodcastPersistence.hasStoredFeeds) -> Bool {
         if hasStoredFeeds { return true }
         return ud.dictionaryRepresentation().keys.contains {
-            $0.hasPrefix("settings.") && $0 != Keys.enqueueDownloaded
+            $0.hasPrefix("settings.") && ![Keys.enqueueDownloaded, Keys.downloadEpisodeCacheLimit, Keys.episodeCleanup].contains($0)
         }
     }
 
@@ -3187,6 +3227,8 @@ final class AppSettings: ObservableObject {
             autoDownloadEpisodesPerFeed: autoDownloadEpisodesPerFeed.rawValue,
             maxParallelDownloads: maxParallelDownloads.rawValue,
             downloadEpisodeCacheLimit: downloadEpisodeCacheLimit.rawValue,
+            episodeCleanup: episodeCleanup.androidValue,
+            streamOverDownload: streamOverDownload,
             feedDownloadUnplayedSoftCap: feedDownloadUnplayedSoftCap.rawValue,
             autoDownloadWifiOnly: autoDownloadWifiOnly,
             manualDownloadWifiOnly: manualDownloadWifiOnly,
@@ -3325,6 +3367,9 @@ final class AppSettings: ObservableObject {
         downloadEpisodeCacheLimit =
             DownloadEpisodeCacheLimit(rawValue: snap.downloadEpisodeCacheLimit ?? DownloadEpisodeCacheLimit.unlimited.rawValue)
             ?? .unlimited
+        episodeCleanup = snap.episodeCleanup.map(EpisodeCleanup.init(androidValue:))
+            ?? (downloadEpisodeCacheLimit == .unlimited ? .default : .notInQueue)
+        streamOverDownload = snap.streamOverDownload ?? false
         feedDownloadUnplayedSoftCap =
             FeedDownloadUnplayedSoftCap(
                 rawValue: snap.feedDownloadUnplayedSoftCap ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
@@ -3566,6 +3611,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var maxParallelDownloads: Int? = 3
     /// Absent in older backups → Unlimited (0). Raw `DownloadEpisodeCacheLimit` value.
     var downloadEpisodeCacheLimit: Int? = 0
+    var episodeCleanup: Int? = nil
+    var streamOverDownload: Bool? = nil
     /// Absent in older backups → 50 (prior hard soft-cap). Raw `FeedDownloadUnplayedSoftCap` value.
     var feedDownloadUnplayedSoftCap: Int? = 50
     var autoDownloadWifiOnly: Bool

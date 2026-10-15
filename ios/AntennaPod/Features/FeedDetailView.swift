@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 import UIKit
 
@@ -3334,6 +3335,18 @@ struct EpisodeRow: View {
         }
     }
 
+    private var showsDownloadButton: Bool {
+        EpisodeRow.showsDownloadButton(
+            isDownloaded: downloads.isDownloaded(episode),
+            isDownloading: downloads.inProgress.contains(episode.id) || downloads.isWaitingDownload(episodeId: episode.id),
+            streamOverDownload: settings.streamOverDownload)
+    }
+
+    static func showsDownloadButton(isDownloaded: Bool, isDownloading: Bool, streamOverDownload: Bool) -> Bool {
+        EpisodeRowPrimaryAction.forEpisode(isDownloaded: isDownloaded, isDownloading: isDownloading,
+                                           streamOverDownload: streamOverDownload) != .stream
+    }
+
     /// Inline action buttons. Split out of `body` so CI type-checks the row in time.
     @ViewBuilder
     private var episodeActionBar: some View {
@@ -3348,6 +3361,9 @@ struct EpisodeRow: View {
                 .accessibilityLabel(resumeLabel)
                 .accessibilityAddTraits(.startsMediaSession)
 
+                // Android prefStreamOverDownload: lists offer Stream (the Play button above streams)
+                // instead of Download for episodes that are not downloaded or downloading.
+                if showsDownloadButton {
                 Button {
                     // A running, queued, or Wi-Fi-held download could only be stopped with
                     // Cancel all downloads. Tapping Waiting / the spinner cancels just this one.
@@ -3377,6 +3393,7 @@ struct EpisodeRow: View {
                             ? String(localized: "Cancels this in-progress download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.")
                             : ""
                 )
+                }
 
                 Button {
                     store.enqueue(episode)

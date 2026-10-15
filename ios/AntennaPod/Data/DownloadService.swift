@@ -1047,32 +1047,54 @@ final class DownloadService: ObservableObject {
         _ = enforceEpisodeCacheLimit()
     }
 
-    /// Keeps completed Downloads catalog at or under `downloadEpisodeCacheLimit`.
-    /// Eviction order (honest — favorites and queue are never auto-deleted by this cap):
-    /// 1. Played + not favorited + not queued, oldest file mtime first.
-    /// 2. Unplayed + not favorited + not queued, oldest mtime first.
-    /// 3. If only favorites / queued remain over the cap, stop (no silent favorite deletion).
-    /// 4. Unlimited (`episodeLimit == nil`) is a no-op.
-    /// 5. `keepEpisodeId` (just-finished download) is skipped when choosing victims.
+    /// Android `prefEpisodeCacheSize` + `prefEpisodeCleanup`: keeps completed downloads at or
+    /// under the episode limit by deleting only what the cleanup mode allows
+    /// (`EpisodeCleanupPolicy.victims`, Android order). Never (default) deletes nothing; the
+    /// limit then only stops auto-download. Unlimited is a no-op. iOS also skips the file loaded
+    /// in the player and `keepEpisodeId` (just-finished download).
     ///
-    /// Distinct from the byte `enforceStorageLimit` (same favorite/queue protection; bytes vs count).
-    /// Called after successful downloads, on Settings open, and on app launch / backup reload.
+    /// Separate from the byte `enforceStorageLimit`. Runs after each download, when opening
+    /// Settings, on launch, and before auto-download (`makeRoomForAutoDownload`).
     @discardableResult
     func enforceEpisodeCacheLimit(keepEpisodeId: String? = nil) -> Int {
-        guard let limit = settings?.downloadEpisodeCacheLimit.episodeLimit else {
-            return 0
+        cleanUpForEpisodeLimit(roomNeeded: 0, keepEpisodeId: keepEpisodeId)
+    }
+
+    /// Android `makeRoomForEpisodes` + `AutomaticDownloadAlgorithm`: deletes eligible downloads so
+    /// `wanted` more fit the episode limit, then returns how many of them may be downloaded.
+    func makeRoomForAutoDownload(wanted: Int) -> Int {
+        let limit = settings?.downloadEpisodeCacheLimit.episodeLimit
+        let downloaded = downloads.count
+        let deleted = cleanUpForEpisodeLimit(roomNeeded: wanted, keepEpisodeId: nil)
+        return EpisodeCleanupPolicy.autoDownloadSpaceLeft(
+            cacheSize: limit, downloaded: downloaded, deleted: deleted, wanted: wanted)
+    }
+
+    @discardableResult
+    private func cleanUpForEpisodeLimit(roomNeeded: Int, keepEpisodeId: String?) -> Int {
+        let toRemove = EpisodeCleanupPolicy.numberToCleanUp(
+            downloaded: downloads.count, roomNeeded: roomNeeded,
+            cacheSize: settings?.downloadEpisodeCacheLimit.episodeLimit)
+        guard toRemove > 0, let mode = settings?.episodeCleanup, mode != .never else { return 0 }
+        let candidates: [CleanupCandidate] = downloads.compactMap { item in
+            if item.id == keepEpisodeId { return nil }
+            if store?.playback?.shouldBlockAutoDelete(for: item.id) == true { return nil }
+            guard FileManager.default.fileExists(atPath: item.localFileURL.path) else { return nil }
+            let state = store?.playbackState(for: item.id)
+            return CleanupCandidate(
+                id: item.id,
+                isPlayed: store?.isPlayed(item.id) == true,
+                isQueued: store?.isInQueue(item.id) == true,
+                isFavorite: store?.isFavorite(item.id) == true,
+                lastPlayedAt: state?.lastPlayedAtEpochMs.map { Date(timeIntervalSince1970: Double($0) / 1000) },
+                pubDate: item.episode.pubDateEpochMs.map { Date(timeIntervalSince1970: Double($0) / 1000) })
         }
         var removed = 0
-        while downloads.count > limit {
-            guard let victim = nextEpisodeCacheEvictionCandidate(keeping: keepEpisodeId) else {
-                break
-            }
-            let countBefore = downloads.count
-            delete(victim.episode)
-            removed += 1
-            if downloads.count >= countBefore {
-                break
-            }
+        for id in EpisodeCleanupPolicy.victims(candidates, mode: mode, count: toRemove, now: Date()) {
+            guard let item = downloads.first(where: { $0.id == id }) else { continue }
+            let before = downloads.count
+            delete(item.episode)
+            if downloads.count < before { removed += 1 }
         }
         return removed
     }
@@ -1279,32 +1301,6 @@ final class DownloadService: ObservableObject {
             if store?.isFavorite(item.id) == true { return false }
             if store?.isInQueue(item.id) == true { return false }
             return FileManager.default.fileExists(atPath: item.localFileURL.path)
-        }
-        guard !candidates.isEmpty else { return nil }
-
-        func mtime(_ item: DownloadedEpisode) -> Date {
-            let values = try? item.localFileURL.resourceValues(forKeys: [.contentModificationDateKey])
-            return values?.contentModificationDate ?? .distantPast
-        }
-
-        let played = candidates.filter { store?.isPlayed($0.id) == true }
-        if let oldestPlayed = played.min(by: { mtime($0) < mtime($1) }) {
-            return oldestPlayed
-        }
-        return candidates.min(by: { mtime($0) < mtime($1) })
-    }
-
-    /// Episode-count cache victim: never favorites or queued; prefer played, then unplayed; oldest mtime.
-    private func nextEpisodeCacheEvictionCandidate(keeping keepEpisodeId: String?) -> DownloadedEpisode? {
-        let candidates = downloads.filter { item in
-            if let keepEpisodeId, item.id == keepEpisodeId { return false }
-            if store?.playback?.shouldBlockAutoDelete(for: item.id) == true { return false }
-            guard FileManager.default.fileExists(atPath: item.localFileURL.path) else { return false }
-            // Never auto-delete favorited / starred offline files via the count cache.
-            if store?.isFavorite(item.id) == true { return false }
-            // Never auto-delete queued episodes via the count cache (user still intends to listen).
-            if store?.isInQueue(item.id) == true { return false }
-            return true
         }
         guard !candidates.isEmpty else { return nil }
 

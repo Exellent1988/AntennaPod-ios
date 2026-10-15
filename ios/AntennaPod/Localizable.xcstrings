@@ -53364,6 +53364,227 @@
           }
         }
       }
+    },
+    "Prefer streaming": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefer streaming"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streaming bevorzugen"
+          }
+        }
+      }
+    },
+    "Display stream button instead of download button in lists": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display stream button instead of download button in lists"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streamen- anstatt Download-Button in Listen anzeigen"
+          }
+        }
+      }
+    },
+    "Delete before auto download": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete before auto download"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vor automatischem Herunterladen löschen"
+          }
+        }
+      }
+    },
+    "Episodes that should be eligible for removal if Auto Download needs space for new episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes that should be eligible for removal if Auto Download needs space for new episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden, die gelöscht werden können, wenn beim automatischen Herunterladen Platz für neue Episoden benötigt wird"
+          }
+        }
+      }
+    },
+    "Automatic download is stopped if this number is reached": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic download is stopped if this number is reached"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das automatische Herunterladen wird beendet, wenn diese Anzahl erreicht wurde"
+          }
+        }
+      }
+    },
+    "When not favorited": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When not favorited"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn nicht favorisiert"
+          }
+        }
+      }
+    },
+    "When not in queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When not in queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn nicht in der Warteschlange"
+          }
+        }
+      }
+    },
+    "After finishing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After finishing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn fertig abgespielt"
+          }
+        }
+      }
+    },
+    "%lld hours after finishing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hours after finishing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Stunden nachdem abgespielt"
+          }
+        }
+      }
+    },
+    "1 day after finishing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 day after finishing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Tag nachdem abgespielt"
+          }
+        }
+      }
+    },
+    "%lld days after finishing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld days after finishing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Tage nachdem abgespielt"
+          }
+        }
+      }
+    },
+    "20 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "20 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "20 Episoden"
+          }
+        }
+      }
+    },
+    "Episode limit: auto-download stops at this many downloads. Delete before auto download (%@) decides which downloads may be removed to make room; Never removes none. Favorites, queued episodes (except When not favorited) and the file loaded in the player are kept. Separate from the Max storage byte budget.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode limit: auto-download stops at this many downloads. Delete before auto download (%@) decides which downloads may be removed to make room; Never removes none. Favorites, queued episodes (except When not favorited) and the file loaded in the player are kept. Separate from the Max storage byte budget."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Limit: Das automatische Herunterladen stoppt bei dieser Anzahl Downloads. „Vor automatischem Herunterladen löschen“ (%@) legt fest, welche Downloads Platz machen dürfen; „Nie“ löscht keine. Favoriten, Episoden in der Warteschlange (außer bei „Wenn nicht favorisiert“) und die im Player geladene Datei bleiben erhalten. Unabhängig vom Speicherlimit in Bytes."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

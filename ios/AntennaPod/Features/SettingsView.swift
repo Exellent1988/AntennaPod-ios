@@ -679,6 +679,17 @@ struct SettingsView: View {
                 appearanceSection
                 homeSettingsSection
                 librarySettingsSection
+                // preferences_user_interface.xml prefStreamOverDownload
+                Section {
+                    Toggle(isOn: $settings.streamOverDownload) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Prefer streaming")
+                            Text("Display stream button instead of download button in lists")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityIdentifier("settings.streamOverDownload")
+                }
                 // preferences_swipe.xml / SwipeActionsDialog
                 Section {
                     NavigationLink {
@@ -2705,6 +2716,16 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(episodeCacheHelpText)
+            // preferences_autodownload.xml prefEpisodeCleanup
+            Picker(String(localized: "Delete before auto download"), selection: $settings.episodeCleanup) {
+                ForEach(EpisodeCleanup.options, id: \.self) { option in
+                    Text(Self.episodeCleanupLabel(option)).tag(option)
+                }
+            }
+            .accessibilityIdentifier("settings.episodeCleanup")
+            .onChange(of: settings.episodeCleanup) { _, _ in downloads.runStorageMaintenance() }
+            Text("Episodes that should be eligible for removal if Auto Download needs space for new episodes")
+                .font(.caption).foregroundStyle(.secondary)
             Picker(String(localized: "Parallel downloads"), selection: $settings.maxParallelDownloads) {
                 ForEach(MaxParallelDownloads.allCases) { cap in
                     Text(cap.label).tag(cap)
@@ -2748,21 +2769,33 @@ struct SettingsView: View {
     /// VoiceOver for Settings → Max downloaded episodes. Count cache eviction;
     /// not the Max storage byte budget. Favorites, queued, and loaded player file protected.
     private var maxDownloadedEpisodesAccessibilityValue: String {
-        let cap = settings.downloadEpisodeCacheLimit
-        let label = cap.label
-        if cap == .unlimited {
-            return String(localized: "Unlimited. This is the default. There is no episode-count cache, so count alone does not auto-delete offline files. Max storage can still evict by byte budget. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads.")
-        }
-        let head = String(format: String(localized: "%@. This is not the default of Unlimited."), locale: .current, label)
-        return head + " " + String(localized: "When the number of completed offline downloads is over this count, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this cap. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from the Max storage byte budget. Changing this does not invent downloads or change Parallel downloads.")
+        settings.downloadEpisodeCacheLimit.label + ". " + episodeCacheHelpText
     }
 
     private var maxDownloadedEpisodesAccessibilityHint: String {
-        String(localized: "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited — Unlimited does not delete files by count alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max storage or Parallel downloads. Changing to a lower count may delete unprotected offline files; choosing Unlimited does not delete files now.")
+        String(localized: "Automatic download is stopped if this number is reached")
+    }
+
+    /// Android `episode_cleanup_entries` labels.
+    static func episodeCleanupLabel(_ option: EpisodeCleanup) -> String {
+        switch option {
+        case .exceptFavorite: return String(localized: "When not favorited")
+        case .notInQueue: return String(localized: "When not in queue")
+        case .never: return String(localized: "Never")
+        case .afterFinishing(let hours):
+            if hours == 0 { return String(localized: "After finishing") }
+            if hours < 24 {
+                return String(format: String(localized: "%lld hours after finishing"), hours)
+            }
+            let days = hours / 24
+            return days == 1 ? String(localized: "1 day after finishing")
+                : String(format: String(localized: "%lld days after finishing"), days)
+        }
     }
 
     private var episodeCacheHelpText: String {
-        String(localized: "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.")
+        String(format: String(localized: "Episode limit: auto-download stops at this many downloads. Delete before auto download (%@) decides which downloads may be removed to make room; Never removes none. Favorites, queued episodes (except When not favorited) and the file loaded in the player are kept. Separate from the Max storage byte budget."),
+               Self.episodeCleanupLabel(settings.episodeCleanup))
     }
 
     /// VoiceOver for Settings → Parallel downloads. Cap is active transfers only;

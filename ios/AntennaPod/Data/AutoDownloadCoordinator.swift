@@ -77,7 +77,10 @@ enum AutoDownloadCoordinator {
                 )
             )
         }
-        for episode in candidates {
+        // Android AutomaticDownloadAlgorithm: make room per Delete before auto download, then
+        // only fill what is left under the Episode limit.
+        let spaceLeft = downloads.makeRoomForAutoDownload(wanted: candidates.count)
+        for episode in candidates.prefix(spaceLeft) {
             await downloads.download(episode, source: .automatic)
         }
     }
