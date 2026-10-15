@@ -495,6 +495,11 @@ struct SubscriptionsView: View {
             }
         }
         .tabRootList(.subscriptions)
+        // Android fragment_subscriptions.xml subscriptions_add FAB. Laid out inside the List's safe area,
+        // so it sits above the mini player (TabMiniPlayerInset safeAreaInset) and the tab bar.
+        .overlay(alignment: .bottomTrailing) {
+            SubscriptionsAddButton(addLocked: parental.needsPINForAddDiscover) { showAdd = true }
+        }
         // Android FeedMultiSelectActionHandler: Select + Actions menu, in list and grid mode.
         .feedMultiSelect(selection: $feedSelection, feeds: tagFilteredFeeds)
     }
@@ -1514,5 +1519,34 @@ private struct TagFilterChip: View {
         .accessibilityLabel(title)
         .accessibilityHint(accessibilityHint)
         .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+
+/// Android subscriptions_add FloatingActionButton (fragment_subscriptions.xml, SubscriptionFragment
+/// subscriptionAddButton → AddFeedFragment). Hidden while selecting (Android shows the floating select menu
+/// instead) and while parental controls lock Add/Discover; Add stays in ⋯ behind the PIN then.
+struct SubscriptionsAddButton: View {
+    let addLocked: Bool
+    let action: () -> Void
+    @Environment(\.editMode) private var editMode
+
+    static func isVisible(addLocked: Bool, selecting: Bool) -> Bool {
+        !addLocked && !selecting
+    }
+
+    var body: some View {
+        if Self.isVisible(addLocked: addLocked, selecting: editMode?.wrappedValue.isEditing == true) {
+            Button(action: action) {
+                Image(systemName: "plus")
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 56, height: 56)
+                    .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .shadow(color: .black.opacity(0.2), radius: 4, y: 2)
+            }
+            .buttonStyle(.plain)
+            .padding(16)
+            .accessibilityLabel(String(localized: "Add podcast"))
+        }
     }
 }

@@ -27,4 +27,10 @@ final class SubscriptionsGridParityTests: XCTestCase {
         XCTAssertEqual(SubscriptionsDisplayMode.initial(stored: "list", isFreshInstall: true), .list, "saved choice wins")
         XCTAssertEqual(SubscriptionsDisplayMode.initial(stored: "grid", isFreshInstall: false), .grid)
     }
+
+    func testAddButtonHiddenWhenLockedOrSelecting() {
+        XCTAssertTrue(SubscriptionsAddButton.isVisible(addLocked: false, selecting: false))
+        XCTAssertFalse(SubscriptionsAddButton.isVisible(addLocked: true, selecting: false), "parental lock")
+        XCTAssertFalse(SubscriptionsAddButton.isVisible(addLocked: false, selecting: true), "select mode")
+    }
 }
