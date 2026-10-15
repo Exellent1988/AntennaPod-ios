@@ -2658,6 +2658,14 @@ struct SettingsView: View {
             Text(autoDeleteHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Toggle(isOn: $settings.favoriteKeepsEpisode) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Keep favorite episodes")
+                    Text("Keep episodes when they are marked favorite")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            .accessibilityIdentifier("settings.favoriteKeepsEpisode")
             LabeledContent("Used") {
                 Text(storageUsedLabel)
                     .foregroundStyle(downloads.storageUsage.isOverLimit ? .red : .primary)
@@ -2813,7 +2821,7 @@ struct SettingsView: View {
 
     private var autoDeleteHelpText: String {
         if settings.autoDeleteAfterPlaying {
-            return String(localized: "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes. Per-podcast Feed settings can override with Always / Never.")
+            return String(localized: "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorite episodes while Keep favorite episodes is on. Per-podcast Feed settings can override with Always / Never.")
         }
         return String(localized: "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept. Per-podcast Feed settings can still Always delete for one feed.")
     }

@@ -1379,6 +1379,7 @@ final class AppSettings: ObservableObject {
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
         static let enqueueLocation = "settings.enqueueLocation"
         static let keepSkippedEpisodes = "settings.keepSkippedEpisodes"
+        static let favoriteKeepsEpisode = "settings.favoriteKeepsEpisode"
         static let enqueueDownloaded = "settings.enqueueDownloaded"
         static let deleteRemovesFromQueue = "settings.deleteRemovesFromQueue"
         static let pauseOnDisconnect = "settings.pauseOnDisconnect"
@@ -1994,6 +1995,10 @@ final class AppSettings: ObservableObject {
     }
 
     /// Android `prefSkipKeepsEpisode` (default on): a skipped episode stays unplayed in the queue.
+    /// Android `prefFavoriteKeepsEpisode` (default on, global): delete after playing skips favorites.
+    @Published var favoriteKeepsEpisode: Bool {
+        didSet { UserDefaults.standard.set(favoriteKeepsEpisode, forKey: Keys.favoriteKeepsEpisode) }
+    }
     @Published var keepSkippedEpisodes: Bool {
         didSet { UserDefaults.standard.set(keepSkippedEpisodes, forKey: Keys.keepSkippedEpisodes) }
     }
@@ -2709,6 +2714,7 @@ final class AppSettings: ObservableObject {
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
         enqueueLocation = EnqueueLocation(storedValue: UserDefaults.standard.string(forKey: Keys.enqueueLocation))
         keepSkippedEpisodes = UserDefaults.standard.object(forKey: Keys.keepSkippedEpisodes) as? Bool ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
+        favoriteKeepsEpisode = UserDefaults.standard.object(forKey: Keys.favoriteKeepsEpisode) as? Bool ?? FavoriteKeepPolicy.defaultFavoriteKeepsEpisode
         enqueueDownloaded = UserDefaults.standard.object(forKey: Keys.enqueueDownloaded) as? Bool ?? QueueAutoPolicy.defaultEnqueueDownloaded
         deleteRemovesFromQueue = UserDefaults.standard.object(forKey: Keys.deleteRemovesFromQueue) as? Bool ?? QueueAutoPolicy.defaultDeleteRemovesFromQueue
         pauseOnDisconnect = UserDefaults.standard.object(forKey: Keys.pauseOnDisconnect) as? Bool ?? DisconnectPausePolicy.defaultPauseOnDisconnect
@@ -3209,6 +3215,7 @@ final class AppSettings: ObservableObject {
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             enqueueLocation: enqueueLocation.rawValue,
             keepSkippedEpisodes: keepSkippedEpisodes,
+            favoriteKeepsEpisode: favoriteKeepsEpisode,
             enqueueDownloaded: enqueueDownloaded,
             deleteRemovesFromQueue: deleteRemovesFromQueue,
             pauseOnDisconnect: pauseOnDisconnect,
@@ -3369,6 +3376,7 @@ final class AppSettings: ObservableObject {
         hardwarePreviousButton = HardwareButtonAction.resolve(snap.hardwarePreviousButton, default: .defaultPrevious)
         pauseOnDisconnect = snap.pauseOnDisconnect ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         keepSkippedEpisodes = snap.keepSkippedEpisodes ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
+        favoriteKeepsEpisode = snap.favoriteKeepsEpisode ?? FavoriteKeepPolicy.defaultFavoriteKeepsEpisode
         enqueueDownloaded = snap.enqueueDownloaded ?? QueueAutoPolicy.defaultEnqueueDownloaded
         deleteRemovesFromQueue = snap.deleteRemovesFromQueue ?? QueueAutoPolicy.defaultDeleteRemovesFromQueue
         enqueueLocation = EnqueueLocation(storedValue: snap.enqueueLocation)
@@ -3622,6 +3630,7 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var enqueueLocation: String? = nil
     /// Absent in older backups → default.
     var keepSkippedEpisodes: Bool? = nil
+    var favoriteKeepsEpisode: Bool? = nil
     /// Absent in older backups → default (on).
     var enqueueDownloaded: Bool? = nil
     /// Absent in older backups → default (off).

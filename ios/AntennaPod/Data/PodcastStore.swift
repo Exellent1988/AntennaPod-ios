@@ -1366,7 +1366,7 @@ final class PodcastStore: ObservableObject {
             pendingAutoDeleteIds.remove(episodeId)
             return
         }
-        guard !isFavorite(episodeId) else {
+        guard !favoriteKeepsEpisode(episodeId) else {
             pendingAutoDeleteIds.remove(episodeId)
             return
         }
@@ -1378,10 +1378,18 @@ final class PodcastStore: ObservableObject {
         performAutoDeleteAfterPlaying(episodeId)
     }
 
+    /// Android `prefFavoriteKeepsEpisode`: a favorite is kept from delete-after-playing only while
+    /// the setting is on. Cleanup / cache limits keep favorites regardless.
+    func favoriteKeepsEpisode(_ episodeId: String) -> Bool {
+        !FavoriteKeepPolicy.deleteAfterPlaying(
+            autoDeleteAllowed: true, isFavorite: isFavorite(episodeId),
+            favoriteKeepsEpisode: settings?.favoriteKeepsEpisode ?? FavoriteKeepPolicy.defaultFavoriteKeepsEpisode)
+    }
+
     private func performAutoDeleteAfterPlaying(_ episodeId: String) {
         guard shouldAutoDeleteAfterPlaying(episodeId: episodeId) else { return }
-        // Favorited / starred episodes keep their offline file.
-        guard !isFavorite(episodeId) else { return }
+        // Favorites keep their offline file while "Keep favorite episodes" is on (Android default).
+        guard !favoriteKeepsEpisode(episodeId) else { return }
         guard let downloads else { return }
         let episode: PodcastEpisode?
         if let item = downloads.downloads.first(where: { $0.id == episodeId }) {
