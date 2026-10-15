@@ -57,27 +57,27 @@ struct EpisodeMultiSelectModifier: ViewModifier {
                 }
                 // Batch controls in the navigation bar. A `.bottomBar` toolbar item (and anything pinned to the
                 // list's bottom) ends up under the tab bar and mini player inside a TabView tab, so selecting
-                // showed no actions. Android shows its SpeedDial (floatingSelectMenu) over the list.
+                // showed no actions. On compact widths (iPhone SE) a second trailing item next to "Done" and the
+                // screen's own "…" menu was dropped, so select-all and the batch actions share ONE leading menu.
+                // Android: the multi-select toolbar's select-all plus the floatingSelectMenu SpeedDial.
                 if isSelecting {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Menu {
+                            Button(selection.count == episodes.count ? String(localized: "Deselect all") : String(localized: "Select all")) {
+                                if selection.count == episodes.count {
+                                    selection.removeAll()
+                                } else {
+                                    selection = Set(episodes.map(\.id))
+                                }
+                            }
                             Section(String(format: String(localized: "%lld selected"), selection.count)) {
                                 batchActions
                             }
+                            .disabled(selection.isEmpty)
                         } label: {
                             Label("Actions", systemImage: "checklist")
                         }
-                        .disabled(selection.isEmpty)
                         .accessibilityValue(String(format: String(localized: "%lld selected"), selection.count))
-                    }
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(selection.count == episodes.count ? String(localized: "Deselect all") : String(localized: "Select all")) {
-                            if selection.count == episodes.count {
-                                selection.removeAll()
-                            } else {
-                                selection = Set(episodes.map(\.id))
-                            }
-                        }
                     }
                 }
             }
