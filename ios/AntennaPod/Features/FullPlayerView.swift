@@ -320,6 +320,16 @@ struct FullPlayerView: View {
             _ = playback.pictureInPicture.isPossible
             _ = playback.pictureInPicture.isActive
         }
+        #if DEBUG
+        // Screenshots: `-APDebugPodcastSettings` opens Podcast settings once the player is up.
+        .task {
+            guard ProcessInfo.processInfo.arguments.contains("-APDebugPodcastSettings") else { return }
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            showPodcastSettings = true
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            PlayerDebugLaunch.scrollPresentedList()
+        }
+        #endif
         .sheet(isPresented: $showPodcastSettings) {
             if let feed {
                 NavigationStack {

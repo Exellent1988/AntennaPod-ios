@@ -64,6 +64,7 @@ struct SettingsView: View {
     @State private var showCustomDefaultSpeed = false
     @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
     @State private var showCustomSmartMark = false
+    @State private var customSkipIntroOutro: CustomSkipIntroOutroSheet.Kind?
     @Environment(\.scenePhase) private var scenePhase
     /// System notification auth — store status (not display string) so Denied checks survive EN/DE.
     @State private var notificationAuthStatus: NotificationAuthStatus = .checking
@@ -273,6 +274,14 @@ struct SettingsView: View {
             CustomSmartMarkSheet(initialSeconds: settings.smartMarkAsPlayedSeconds)
                 .environmentObject(settings)
         }
+        .sheet(item: $customSkipIntroOutro) { kind in
+            CustomSkipIntroOutroSheet(
+                kind: kind,
+                initialSeconds: kind == .intro ? settings.skipIntroSeconds : settings.skipOutroSeconds
+            ) { seconds in
+                if kind == .intro { settings.skipIntroSeconds = seconds } else { settings.skipOutroSeconds = seconds }
+            }
+        }
     }
 
     var body: some View {
@@ -298,6 +307,15 @@ struct SettingsView: View {
                     }
                 }
                 .searchable(text: $searchText, prompt: "Search settings")
+                #if DEBUG
+                // Screenshots: `-APDebugSettingsSearch "<text>"` pre-fills the settings search.
+                .onAppear {
+                    let args = ProcessInfo.processInfo.arguments
+                    if let i = args.firstIndex(of: "-APDebugSettingsSearch"), i + 1 < args.count {
+                        searchText = args[i + 1]
+                    }
+                }
+                #endif
                 .onChange(of: searchText) { _, newValue in
                     scheduleFilter(for: newValue)
                 }
@@ -1383,23 +1401,19 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackIntroOutro {
-                Picker("Skip intro", selection: $settings.skipIntroSeconds) {
-                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
-                    }
+                Picker("Skip intro", selection: globalSkipBinding(.intro)) {
+                    skipIntroOutroOptions(current: settings.skipIntroSeconds)
                 }
                 .accessibilityLabel(String(localized: "Skip intro"))
                 .accessibilityValue(skipIntroAccessibilityValue)
                 .accessibilityHint(skipIntroAccessibilityHint)
-                Picker("Skip outro", selection: $settings.skipOutroSeconds) {
-                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
-                    }
+                Picker("Skip outro", selection: globalSkipBinding(.outro)) {
+                    skipIntroOutroOptions(current: settings.skipOutroSeconds)
                 }
                 .accessibilityLabel(String(localized: "Skip outro"))
                 .accessibilityValue(skipOutroAccessibilityValue)
                 .accessibilityHint(skipOutroAccessibilityHint)
-                Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.")
+                Text("Global default for every podcast without its own value. Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). Off = 0; Custom… takes any number of seconds up to 3600. Override per podcast in its settings → Playback.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -1749,6 +1763,33 @@ struct SettingsView: View {
 
     private var resetPositionWhenMarkedPlayedAccessibilityHint: String {
         String(localized: "On clears the saved position to 0 when marked played. Off keeps the position for resume after Mark unplayed. Applies to manual mark, Mark all, smart mark, and natural end. Default on. The switch does not seek now, start playback, or download.")
+    }
+
+    /// Global Skip intro / outro picker binding; the Custom… tag opens the seconds sheet.
+    private func globalSkipBinding(_ kind: CustomSkipIntroOutroSheet.Kind) -> Binding<Int> {
+        Binding(
+            get: { kind == .intro ? settings.skipIntroSeconds : settings.skipOutroSeconds },
+            set: { value in
+                if value == CustomSkipIntroOutroSheet.customTag {
+                    customSkipIntroOutro = kind
+                } else if kind == .intro {
+                    settings.skipIntroSeconds = value
+                } else {
+                    settings.skipOutroSeconds = value
+                }
+            }
+        )
+    }
+
+    @ViewBuilder
+    private func skipIntroOutroOptions(current: Int) -> some View {
+        ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+            Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
+        }
+        if !AppSettings.skipIntroOutroPresets.contains(current) {
+            Text(AppSettings.skipIntroOutroLabel(current)).tag(current)
+        }
+        Text(String(localized: "Custom…")).tag(CustomSkipIntroOutroSheet.customTag)
     }
 
     /// Spoken preset for Settings Skip intro / Skip outro. The visible picker
