@@ -48,7 +48,23 @@ private struct ListFilterDebugCover: ViewModifier {
                     settings.queueKeepSortedOrder = nil
                 default: break
                 }
+                if requested == "statistics", let feed = store.feeds.first(where: { $0.feedUrl == url }) {
+                    // Spread sample listening over months and years for the charts.
+                    var states = store.playbackStates
+                    let now = Date()
+                    for (i, e) in feed.episodes.prefix(30).enumerated() {
+                        let when = Calendar.current.date(byAdding: .day, value: -i * 23, to: now) ?? now
+                        let ms = Int64(when.timeIntervalSince1970 * 1000)
+                        var st = EpisodePlaybackState(positionSeconds: 0, durationSeconds: max(e.durationSeconds, 1800),
+                                                      isPlayed: true, updatedAtEpochMs: ms, lastPlayedAtEpochMs: ms)
+                        st.listenedWallSeconds = max(e.durationSeconds, 1800) * Double(1 + i % 3) / 3
+                        states[e.id] = st
+                    }
+                    store.playbackStates = states
+                }
                 screen = requested
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                PlayerDebugLaunch.scrollPresentedList()
             }
             .fullScreenCover(isPresented: Binding(get: { screen != nil }, set: { if !$0 { screen = nil } })) {
                 switch screen {
