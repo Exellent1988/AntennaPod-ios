@@ -1308,10 +1308,12 @@ struct SubscriptionsView: View {
             feedId: feed.id,
             podcastTitle: EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle(feed)),
             websiteURL: feed.websiteURL,
+            feedShareURL: URL(string: feed.feedUrl).flatMap { ["http", "https"].contains($0.scheme?.lowercased() ?? "") ? $0 : nil },
             isPinned: store.isPinned(feedId: feed.id),
             openURL: openURL,
             onTogglePin: { store.togglePinned(feedId: feed.id) },
             onOpenSettings: { feedForSettings = feed },
+            onUnsubscribe: { feedPendingUnsubscribe = feed },
             onCopyPodcastTitle: { title in
                 copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(title)
                 copyFeedbackTick += 1
@@ -1439,10 +1441,14 @@ private struct SubscriptionRowContextMenu: ViewModifier {
     let feedId: UUID
     let podcastTitle: String?
     let websiteURL: URL?
+    /// http(s) feed URL only (local-folder feeds have none to share).
+    let feedShareURL: URL?
     let isPinned: Bool
     let openURL: OpenURLAction
     let onTogglePin: () -> Void
     let onOpenSettings: () -> Void
+    /// Opens the same confirmation as the Unsubscribe swipe (no new delete path).
+    let onUnsubscribe: () -> Void
     let onCopyPodcastTitle: (String) -> Void
 
     func body(content: Content) -> some View {
@@ -1493,6 +1499,21 @@ private struct SubscriptionRowContextMenu: ViewModifier {
                 }
                 .accessibilityLabel(String(localized: "Open podcast website"))
                 .accessibilityHint(String(localized: "Opens the feed-provided podcast website http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the feed RSS URL or an episode webpage. Distinct from Open episode website, Copy podcast website, and Share podcast website. Does not subscribe, download, or change playback."))
+            }
+
+            // Android nav_feed_context share_feed (ShareUtils.shareFeedLink).
+            if let feedShareURL {
+                ShareLink(item: feedShareURL) {
+                    Label("Share feed URL", systemImage: "square.and.arrow.up")
+                }
+            }
+
+            // Android nav_feed_context remove_archive_feed: remove the podcast from the long-press menu.
+            Divider()
+            Button(role: .destructive) {
+                onUnsubscribe()
+            } label: {
+                Label("Unsubscribe", systemImage: "trash")
             }
         }
     }
