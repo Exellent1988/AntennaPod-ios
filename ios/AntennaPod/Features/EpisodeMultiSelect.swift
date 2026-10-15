@@ -89,7 +89,8 @@ struct EpisodeMultiSelectModifier: ViewModifier {
     @ViewBuilder
     private var batchActions: some View {
         Button {
-            selected.filter { !store.isInQueue($0.id) }.forEach { store.enqueue($0) }
+            // One batch so Front / After current keep the selection order (Android addQueueItem).
+            store.enqueue(selected.filter { !store.isInQueue($0.id) })
             finish()
         } label: {
             Label("Add to queue", systemImage: "text.append")
