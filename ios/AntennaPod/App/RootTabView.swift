@@ -24,6 +24,7 @@ struct RootTabView: View {
     @State private var debugEpisodeDetail: PodcastEpisode?
     /// Bumped when the active tab is tapped again; a new id pops that tab back to its root screen.
     @State private var tabRootResets: [RootTab: Int] = [:]
+    @StateObject private var tabReselect = TabReselectCenter()
 
     var body: some View {
         cannotStreamAlertStage(rootTabContent)
@@ -34,6 +35,7 @@ struct RootTabView: View {
         deepLinkStage(settingsObserversStage(
             // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
             rootTabs
+                .environment(\.tabReselectCenter, tabReselect)
             .onChange(of: selectedTab) { previous, tab in
                 guard tab == .settings else { return }
                 selectedTab = previous == .settings ? .home : previous
@@ -75,12 +77,18 @@ struct RootTabView: View {
         ))
     }
 
-    /// Re-tapping the active tab pops it to root, like Android's bottom nav reselect.
+    /// Re-tapping the active tab pops it to root; at the root it scrolls the list to the top (TabRootScroll.swift).
     private var tabSelection: Binding<RootTab> {
         Binding(
             get: { selectedTab },
             set: { tab in
-                if tab == selectedTab { tabRootResets[tab, default: 0] += 1 }
+                if tab == selectedTab {
+                    if tabReselect.rootVisible.contains(tab) {
+                        tabReselect.requestScrollToTop(tab)
+                    } else {
+                        tabRootResets[tab, default: 0] += 1
+                    }
+                }
                 selectedTab = tab
             }
         )

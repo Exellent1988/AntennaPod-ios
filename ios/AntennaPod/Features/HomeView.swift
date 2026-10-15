@@ -622,6 +622,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             List {
+                TabRootTopAnchor()
                 ForEach(settings.visibleHomeSections) { sectionId in
                     homeSection(for: sectionId)
                     emptySectionPlaceholder(for: sectionId)
@@ -649,6 +650,7 @@ struct HomeView: View {
                     .accessibilityHint(String(localized: "Use Configure Home or Settings → Home layout to show, hide, and reorder sections. Subscribe from Discover or Add podcast."))
                 }
             }
+            .tabRootList(.home)
             .navigationTitle("Home")
             .toolbar {
                 // Settings is not a tab (5 tabs, no system More); the gear opens it as a sheet.

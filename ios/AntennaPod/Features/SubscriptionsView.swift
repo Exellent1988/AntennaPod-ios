@@ -377,6 +377,7 @@ struct SubscriptionsView: View {
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var subscriptionsList: some View {
         List {
+            TabRootTopAnchor()
             // One pass over every feed's episodes per body (the body reruns on each 0.5s
             // playback tick); the info bar and every row read this same map.
             let remainingByFeedId = unplayedRemainingByFeedId
@@ -565,6 +566,7 @@ struct SubscriptionsView: View {
                 }
             }
         }
+        .tabRootList(.subscriptions)
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
