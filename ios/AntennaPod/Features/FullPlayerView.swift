@@ -28,6 +28,7 @@ struct FullPlayerView: View {
     @State private var isLoadingMediaChapters = false
     @State private var showTranscript = false
     @State private var showDescription = false
+    @State private var showChaptersFromTitle = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
     @State private var showSleepTimerSheet = false
@@ -241,6 +242,7 @@ struct FullPlayerView: View {
                             }
                             .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
                         }
+                        if let ep = resolvedEpisode ?? episode { PlayerShareExtras(episode: ep) }
                         Button {
                             playback.skipToNextEpisode()
                         } label: {
@@ -384,6 +386,9 @@ struct FullPlayerView: View {
                 TranscriptSheetView(episode: episode)
                     .environmentObject(playback)
             }
+        }
+        .sheet(isPresented: $showChaptersFromTitle) {
+            EpisodeChaptersSheet(chapters: chapters, episode: resolvedEpisode ?? episode)
         }
         .sheet(isPresented: $showDescription) {
             if let episode = resolvedEpisode ?? episode {
@@ -620,6 +625,9 @@ struct FullPlayerView: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                         .frame(maxWidth: .infinity)
+                        .contentShape(Rectangle())
+                        .onTapGesture { if !chapters.isEmpty { showChaptersFromTitle = true } }
+                        .accessibilityAddTraits(chapters.isEmpty ? [] : .isButton)
                         .accessibilityLabel(currentChapterTitle.map { String(localized: "Chapter \($0)") } ?? "")
                     if canSkipChapters {
                         Button {
@@ -1235,7 +1243,7 @@ struct FullPlayerView: View {
                     .accessibilityLabel(String(localized: "Video player"))
             }
         } else {
-            artwork(side: side)
+            PlayerCoverNotesPager(side: side, episode: resolvedEpisode ?? episode) { artwork(side: side) }
         }
     }
 
