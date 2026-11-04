@@ -674,6 +674,19 @@ final class PlaybackService: ObservableObject {
         if let next = SpeedPresets.next(after: rate, in: presets) { setRate(next) }
     }
 
+    /// Android `onNextChapter`: jump to the next chapter; on the last chapter / no chapters skip the episode.
+    func skipToNextChapter() {
+        let starts = resolvedSleepTimerChapters.map(\.startTimeSeconds)
+        if let target = NowPlayingLogic.nextChapterStart(starts: starts, at: positionSeconds) {
+            seek(toSeconds: target)
+        } else {
+            skipToNextEpisode()
+        }
+    }
+
+    /// True when the loaded episode has chapters (CarPlay Next chapter button).
+    var hasChaptersForRemote: Bool { !resolvedSleepTimerChapters.isEmpty }
+
     func seek(bySeconds delta: Double) {
         // Android seekForward: a skip that would land at or past a known duration
         // finishes the episode (mark played, continuous next, sleep-timer end).
@@ -2570,13 +2583,34 @@ final class PlaybackService: ObservableObject {
 
         applyRemoteSkipIntervals()
 
+        // CarPlay Now Playing rate button / Siri "play faster": snap to Settings speed presets.
+        center.changePlaybackRateCommand.isEnabled = true
+        center.changePlaybackRateCommand.addTarget { [weak self] event in
+            guard let rateEvent = event as? MPChangePlaybackRateCommandEvent else { return .commandFailed }
+            let requested = rateEvent.playbackRate
+            Task { @MainActor in
+                guard let self else { return }
+                let supported = NowPlayingLogic.supportedRates(presets: AppSettings.speedPresets, current: self.rate)
+                if let snapped = NowPlayingLogic.nearestRate(requested, supported: supported) { self.setRate(snapped) }
+            }
+            return .success
+        }
+
         // Headset / steering-wheel / lock-screen next & previous: Android "Reassign hardware buttons"
         // (Settings → Forward button / Previous button; defaults fast-forward / rewind).
         center.nextTrackCommand.isEnabled = true
         center.nextTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                self.performHardwareButton(self.settings?.hardwareForwardButton ?? HardwareButtonAction.defaultForward)
+                // Android PlaybackService: transport-control onSkipToNext skips the episode in car
+                // mode; headset/BT key KEYCODE_MEDIA_NEXT goes through handleKeycode → remapped
+                // prefHardwareForwardButton (default fast-forward). iOS merges both into this command.
+                switch NowPlayingLogic.nextTrackAction(inCar: AppServices.isCarPlayConnected) {
+                case .skipEpisode:
+                    self.skipToNextEpisode()
+                case .hardwareButton, .rewind:
+                    self.performHardwareButton(self.settings?.hardwareForwardButton ?? HardwareButtonAction.defaultForward)
+                }
             }
             return .success
         }
@@ -2585,7 +2619,14 @@ final class PlaybackService: ObservableObject {
         center.previousTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                self.performHardwareButton(self.settings?.hardwarePreviousButton ?? HardwareButtonAction.defaultPrevious)
+                // Android onSkipToPrevious (Android Auto / car) always rewinds by the Settings interval and
+                // ignores the remap; headset KEYCODE_MEDIA_PREVIOUS uses prefHardwarePreviousButton.
+                switch NowPlayingLogic.previousTrackAction(inCar: AppServices.isCarPlayConnected) {
+                case .rewind:
+                    self.seek(bySeconds: -self.rewindSeconds)
+                default:
+                    self.performHardwareButton(self.settings?.hardwarePreviousButton ?? HardwareButtonAction.defaultPrevious)
+                }
             }
             return .success
         }
@@ -2617,8 +2658,11 @@ final class PlaybackService: ObservableObject {
 
     func applyRemoteSkipIntervals() {
         let center = MPRemoteCommandCenter.shared()
-        center.skipForwardCommand.preferredIntervals = [NSNumber(value: fastForwardSeconds)]
-        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: rewindSeconds)]
+        let intervals = NowPlayingLogic.skipIntervals(rewind: rewindSeconds, forward: fastForwardSeconds)
+        center.skipForwardCommand.preferredIntervals = [NSNumber(value: intervals.forward)]
+        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: intervals.back)]
+        center.changePlaybackRateCommand.supportedPlaybackRates =
+            NowPlayingLogic.supportedRates(presets: AppSettings.speedPresets, current: rate).map { NSNumber(value: $0) }
     }
 
     private func updateNowPlayingInfo(force: Bool) {
@@ -2643,8 +2687,11 @@ final class PlaybackService: ObservableObject {
 
         var info = [String: Any]()
         info[MPMediaItemPropertyTitle] = episode.title
+        // Combined's chapter fields (album line = chapter title, number/count) replace the CarPlay
+        // branch's chapter-in-artist line, so the chapter is not shown twice.
         info[MPMediaItemPropertyArtist] = feedName
         info[MPMediaItemPropertyAlbumTitle] = feedName
+        info[MPMediaItemPropertyPodcastTitle] = feedName
         if let chapterFields {
             // iOS has no chapter-title field; the album line shows the current chapter (Android
             // shows it under the cover in the player). Number/count feed CarPlay / AirPlay UIs.

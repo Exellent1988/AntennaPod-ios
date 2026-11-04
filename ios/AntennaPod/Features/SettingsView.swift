@@ -584,7 +584,7 @@ struct SettingsView: View {
         if matchesSearch("Apple Watch", "Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.") {
             appleWatchSection
         }
-        if matchesSearch("CarPlay", "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).") {
+        if matchesSearch("CarPlay", "CarPlay (beta): four tabs in Android Auto order — Queue (with Currently playing on top), Downloads, Episodes (All Episodes filter and sort), and Subscriptions (tap a podcast for its episodes). Lists update while open and show artwork, playback progress, and the playing episode. Tapping an episode plays it (offline file when downloaded) and opens CarPlay Now Playing — play/pause/skip/seek use the Settings intervals; next/previous → skip. Needs Apple's CarPlay audio entitlement in the signed build. No search or voice browsing. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).") {
             carPlaySection
         }
         if matchesSearch("About") {
@@ -3122,7 +3122,7 @@ struct SettingsView: View {
     @ViewBuilder
     private var carPlaySection: some View {
         Section {
-            Text("CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).")
+            Text("CarPlay (beta): four tabs in Android Auto order — Queue (with Currently playing on top), Downloads, Episodes (All Episodes filter and sort), and Subscriptions (tap a podcast for its episodes). Lists update while open and show artwork, playback progress, and the playing episode. Tapping an episode plays it (offline file when downloaded) and opens CarPlay Now Playing — play/pause/skip/seek use the Settings intervals; next/previous → skip. Needs Apple's CarPlay audio entitlement in the signed build. No search or voice browsing. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(String(localized: "CarPlay"))
@@ -3153,11 +3153,11 @@ struct SettingsView: View {
 
     /// VoiceOver for Settings → CarPlay. Caption-only honesty note: Now Playing remotes, no templates.
     private var carPlayAccessibilityValue: String {
-        String(localized: "Honest partial. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Background audio and the playback session are already set. There are no custom CarPlay templates, no CarPlay scene, and no CarPlay entitlement in this beta. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay.")
+        String(localized: "Beta. CarPlay shows four tabs: Queue, Downloads, Episodes, and Subscriptions. Queue starts with the currently playing episode. Lists update while open, with artwork, playback progress, and a playing indicator. Tapping a podcast opens its episodes; tapping an episode plays it and opens Now Playing, with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Requires Apple's CarPlay audio entitlement. No search or voice browsing. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay.")
     }
 
     private var carPlayAccessibilityHint: String {
-        String(localized: "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings Rewind and Fast-forward intervals — next and previous skip by those intervals. No custom CarPlay templates, scene, or entitlement in this beta. Background audio is already set. Not Siri Shortcuts, the homescreen widget, or Apple Watch.")
+        String(localized: "Read-only note. This screen does not turn CarPlay on or off or start playback. In the car, browse the Queue, Downloads, Episodes, and Subscriptions tabs, then tap an episode to play it in Now Playing — next and previous skip by the Settings Rewind and Fast-forward intervals. Requires Apple's CarPlay audio entitlement. Not Siri Shortcuts, the homescreen widget, or Apple Watch.")
     }
 
     private var gpodderSyncSection: some View {
