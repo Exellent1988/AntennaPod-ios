@@ -1572,6 +1572,17 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            if matchesPlaybackVolume {
+                Picker("Default volume adaptation", selection: $settings.volumeAdaptationMode) {
+                    ForEach(VolumeAdaptationMode.allCases) { mode in
+                        Text(mode.label).tag(mode)
+                    }
+                }
+                .accessibilityHint(String(localized: "Gain applied to every podcast without its own Volume adaptation override. Reductions lower loud shows; boosts raise quiet shows with a soft limiter. Applies immediately. Has no effect on HLS streams."))
+                Text("Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts: +6 / +12 / +18 dB with a soft limiter. HLS streams are not processed.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             if matchesPlaybackVolumeBoost {
                 Picker("Volume boost", selection: $settings.volumeBoostPercent) {
                     ForEach(AppSettings.volumeBoostPresets, id: \.self) { percent in

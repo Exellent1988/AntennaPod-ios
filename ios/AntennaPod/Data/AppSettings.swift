@@ -4096,3 +4096,17 @@ extension SkipSilenceLevel {
         }
     }
 }
+
+extension VolumeAdaptationMode {
+    /// Android-style labels for the Volume adaptation pickers.
+    var label: String {
+        switch self {
+        case .off: return String(localized: "Off")
+        case .lightReduction: return String(localized: "Light reduction")
+        case .heavyReduction: return String(localized: "Heavy reduction")
+        case .lightBoost: return String(localized: "Light boost")
+        case .mediumBoost: return String(localized: "Medium boost")
+        case .heavyBoost: return String(localized: "Heavy boost")
+        }
+    }
+}
