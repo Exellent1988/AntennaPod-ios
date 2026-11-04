@@ -215,39 +215,3 @@ struct SelectEpisodeMenuItem: View {
         }
     }
 }
-
-/// Long-press "Select" (Android feeditemlist_context multi_select): enters multi-select with that
-/// episode already selected. nil in lists without multi-select.
-struct StartEpisodeSelection {
-    let start: (String) -> Void
-    func callAsFunction(_ episodeId: String) { start(episodeId) }
-}
-
-private struct StartEpisodeSelectionKey: EnvironmentKey {
-    static let defaultValue: StartEpisodeSelection? = nil
-}
-
-extension EnvironmentValues {
-    var startEpisodeSelection: StartEpisodeSelection? {
-        get { self[StartEpisodeSelectionKey.self] }
-        set { self[StartEpisodeSelectionKey.self] = newValue }
-    }
-}
-
-/// The "Select" long-press entry; hidden where the list has no multi-select or is already selecting.
-struct SelectEpisodeMenuItem: View {
-    @Environment(\.startEpisodeSelection) private var startSelection
-    @Environment(\.editMode) private var editMode
-    let episodeId: String
-
-    var body: some View {
-        if let startSelection, editMode?.wrappedValue.isEditing != true {
-            Button {
-                startSelection(episodeId)
-            } label: {
-                Label("Select", systemImage: "checkmark.circle")
-            }
-            .accessibilityHint(String(localized: "Starts selecting episodes, with this one already selected."))
-        }
-    }
-}

@@ -978,15 +978,6 @@ final class PlaybackService: ObservableObject {
         return store.feedSettings(for: feed.id).resolvedKeepSkippedEpisodes(global: global)
     }
 
-    /// True only while `skipToNextEpisode` runs `handlePlaybackEnded` for a kept skip.
-    private var endingIsKeptSkip = false
-
-    func resolvedKeepSkippedEpisodes(for episode: PodcastEpisode) -> Bool {
-        let global = settings?.keepSkippedEpisodes ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
-        guard let store, let feed = store.feed(containingEpisodeId: episode.id) else { return global }
-        return store.feedSettings(for: feed.id).resolvedKeepSkippedEpisodes(global: global)
-    }
-
     /// Pause when the current episode ends (no clock countdown UI).
     func setSleepTimerEndOfEpisode() {
         clearSleepTimerState(restoreVolume: true)
