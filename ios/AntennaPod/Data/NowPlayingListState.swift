@@ -41,7 +41,7 @@ final class NowPlayingListState: ObservableObject {
 
     /// Stored position of the loaded episode (what list rows / totals show).
     var storedPositionSeconds: Double {
-        guard let id = playback.currentEpisode?.id else { return 0 }
+        guard let id = lastEpisodeId ?? playback.currentEpisode?.id else { return 0 }
         return store?.positionSeconds(for: id) ?? 0
     }
 
