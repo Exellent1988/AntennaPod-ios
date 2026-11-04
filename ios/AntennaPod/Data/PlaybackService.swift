@@ -2267,6 +2267,11 @@ final class PlaybackService: ObservableObject {
     /// start muted and the audio session is `.ambient` + `.mixWithOthers`, so test runs make no
     /// sound and never interrupt the Mac's or simulator's other audio. Never set by the app.
     nonisolated(unsafe) static var silentOutputForTests = false
+    /// Alias kept for the playback branch's test name; same effect as `silentOutputForTests`.
+    nonisolated(unsafe) static var muteOutputForTests: Bool {
+        get { silentOutputForTests }
+        set { silentOutputForTests = newValue }
+    }
     /// XCTest host detected (TestHostAudio) or the test bundle switched silence on.
     nonisolated static var silentOutput: Bool { TestHostAudio.isActive || silentOutputForTests }
 
@@ -2590,7 +2595,7 @@ final class PlaybackService: ObservableObject {
             let requested = rateEvent.playbackRate
             Task { @MainActor in
                 guard let self else { return }
-                let supported = NowPlayingLogic.supportedRates(presets: AppSettings.speedPresets, current: self.rate)
+                let supported = NowPlayingLogic.supportedRates(presets: self.settings?.speedPresets ?? AppSettings.storedSpeedPresets(), current: self.rate)
                 if let snapped = NowPlayingLogic.nearestRate(requested, supported: supported) { self.setRate(snapped) }
             }
             return .success
@@ -2662,7 +2667,7 @@ final class PlaybackService: ObservableObject {
         center.skipForwardCommand.preferredIntervals = [NSNumber(value: intervals.forward)]
         center.skipBackwardCommand.preferredIntervals = [NSNumber(value: intervals.back)]
         center.changePlaybackRateCommand.supportedPlaybackRates =
-            NowPlayingLogic.supportedRates(presets: AppSettings.speedPresets, current: rate).map { NSNumber(value: $0) }
+            NowPlayingLogic.supportedRates(presets: settings?.speedPresets ?? AppSettings.storedSpeedPresets(), current: rate).map { NSNumber(value: $0) }
     }
 
     private func updateNowPlayingInfo(force: Bool) {

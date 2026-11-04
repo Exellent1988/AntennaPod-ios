@@ -3233,10 +3233,6 @@ struct EpisodeRow: View {
         store.queue.firstIndex(where: { $0.id == episode.id })
     }
 
-    private var state: EpisodePlaybackState {
-        store.playbackState(for: episode.id)
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top, spacing: 12) {
@@ -4183,19 +4179,4 @@ struct FeedUpdateFrequencyCapsule: View {
         }
     }
 
-    private var progressFraction: Double {
-        let duration = state.durationSeconds
-        let position = state.positionSeconds
-        guard duration.isFinite, duration > 0, position > 0 else {
-            return 0
-        }
-        return min(1, position / duration)
-    }
-
-    private var resumeLabel: String {
-        if !state.isPlayed, state.positionSeconds > 1 {
-            return "Resume"
-        }
-        return "Play"
-    }
 }
