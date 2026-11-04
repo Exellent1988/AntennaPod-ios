@@ -78,6 +78,10 @@ final class PodcastStore: ObservableObject {
     @Published var tagsByFeedId: [UUID: [String]] = [:] {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
     }
+    /// Episode id → position / played. Published so episode rows refresh.
+    @Published var playbackStates: [String: EpisodePlaybackState] = [:] {
+        didSet { PodcastPersistence.savePlaybackStates(playbackStates) }
+    }
     @Published var isLoading = false
     /// Refresh all, single refresh, and local rescan can overlap (Subscriptions swipe Refresh
     /// during Refresh all); `isLoading` turns off only when the last of them ends.
