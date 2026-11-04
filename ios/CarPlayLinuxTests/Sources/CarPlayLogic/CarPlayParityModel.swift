@@ -1,0 +1,1 @@
+../../../AntennaPod/CarPlay/CarPlayParityModel.swift
