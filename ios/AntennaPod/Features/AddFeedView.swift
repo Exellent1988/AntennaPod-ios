@@ -80,6 +80,9 @@ struct AddFeedView: View {
         }
     }
 
+    /// Quick discovery stays until the first Apple search (Android hides it while results show).
+    static func showsQuickDiscovery(didSearch: Bool, hasResults: Bool) -> Bool { !didSearch && !hasResults }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -241,6 +244,21 @@ struct AddFeedView: View {
                 }
             }
 
+            // Android AddFeedFragment quickFeedDiscovery (QuickFeedDiscoveryFragment: chart suggestions,
+            // "Mehr entdecken" → DiscoveryFragment), shown until the user searches.
+            if AddFeedView.showsQuickDiscovery(didSearch: appleDidSearch, hasResults: !appleResults.isEmpty) {
+                Section {
+                    HomeTopListsPreview()
+                } header: {
+                    Text("Discover")
+                } footer: {
+                    NavigationLink {
+                        TopListsView()
+                    } label: {
+                        Text("Discover more")
+                    }
+                }
+            }
             if !appleResults.isEmpty {
                 Section("Results") {
                     ForEach(appleResults) { item in

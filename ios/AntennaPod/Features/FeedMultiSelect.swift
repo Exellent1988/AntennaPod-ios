@@ -242,8 +242,17 @@ struct FeedGridSelectionModifier: ViewModifier {
     private var isSelecting: Bool { editMode?.wrappedValue.isEditing == true }
     private var isSelected: Bool { selection.contains(feedId) }
 
+    /// Android SubscriptionsRecyclerAdapter.onBindViewHolder: a selected card gets a 12dp margin (cover shrinks),
+    /// animated over 100 ms (animateCardMargin).
+    static func cardInset(selecting: Bool, selected: Bool) -> CGFloat {
+        selecting && selected ? 12 : 0
+    }
+
     func body(content: Content) -> some View {
         content
+            .padding(Self.cardInset(selecting: isSelecting, selected: isSelected))
+            .animation(.easeOut(duration: 0.1), value: isSelected)
+            .animation(.easeOut(duration: 0.1), value: isSelecting)
             .overlay {
                 if isSelecting {
                     Button {
