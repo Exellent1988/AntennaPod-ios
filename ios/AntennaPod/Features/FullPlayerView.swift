@@ -1368,6 +1368,7 @@ struct FullPlayerView: View {
                     isScrubbing = false
                 }
             )
+            .overlay { chapterMarksOverlay }
             .accessibilityLabel(String(localized: "Playback position"))
             .accessibilityValue(playbackPositionAccessibilityValue)
             .accessibilityHint(playbackPositionAccessibilityHint)
